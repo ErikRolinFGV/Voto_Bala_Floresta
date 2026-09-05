@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>O Voto, A Bala e a Floresta</title>
+<meta name="description" content="Análise de enquadramento da cobertura eleitoral de 2024 em veículos de mídia local da Amazônia Legal. Explorador interativo de 75.363 publicações de Instagram.">
+<meta property="og:title" content="O Voto, A Bala e a Floresta">
+<meta property="og:description" content="Análise de enquadramento da cobertura eleitoral de 2024 em veículos locais da Amazônia Legal.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Archivo+Narrow:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230f1512'/%3E%3Ccircle cx='11' cy='12' r='4' fill='%235a9fd4'/%3E%3Ccircle cx='21' cy='14' r='4' fill='%23d14a3c'/%3E%3Ccircle cx='16' cy='22' r='4' fill='%234f9d4a'/%3E%3C/svg%3E">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0f1512;color:#e8e6de;font-family:Archivo,Helvetica,Arial,sans-serif;
+     font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:#7fc49a;text-decoration:underline;text-underline-offset:2px}
+a:hover{color:#a8dcbd}
+input[type=checkbox]{accent-color:#2e7a56}
+h1,h2,h3,p{margin:0}
+@keyframes desce{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(6px);opacity:1}}
+.nar{font-family:'Archivo Narrow',Archivo,Helvetica,Arial,sans-serif}
+.rot{font-family:'Archivo Narrow',Archivo,sans-serif;font-size:12px;letter-spacing:.14em;
+     text-transform:uppercase;font-weight:700;color:#7fc49a}
+.sec{padding:88px 6vw;display:flex;flex-direction:column;gap:36px}
+.num{font-family:'Archivo Narrow',Archivo,sans-serif;font-weight:700;font-variant-numeric:tabular-nums}
+.card{background:#131a16;padding:24px;display:flex;flex-direction:column;gap:10px}
+.card .n{font-family:'Archivo Narrow',Archivo,sans-serif;font-size:12px;letter-spacing:.14em;
+         color:#5a9fd4;font-weight:700}
+.card .t{font-family:'Archivo Narrow',Archivo,sans-serif;font-size:19px;font-weight:600;color:#e8e6de}
+.card .c{font-size:14px;line-height:1.55;color:#9aa298;text-wrap:pretty}
+.lim{border-left:3px solid #d14a3c;padding:4px 0 4px 18px;display:flex;flex-direction:column;gap:7px}
+.lim b{font-family:'Archivo Narrow',Archivo,sans-serif;font-size:17px;font-weight:600;color:#e8e6de}
+.lim span{font-size:14px;line-height:1.6;color:#a8afa4;text-wrap:pretty}
+.kpi{padding:18px 0;display:flex;flex-direction:column;gap:2px}
+.kpi .v{font-size:34px;line-height:1.1;color:#e8e6de}
+.kpi .k{font-family:'Archivo Narrow',Archivo,sans-serif;font-size:11.5px;letter-spacing:.12em;
+        text-transform:uppercase;color:#7d857c;font-weight:600}
+/* --- painel claro de configuração --- */
+#entrar{background:#cfcdc0;color:#1a1f1c;padding:80px 6vw 64px}
+#entrar .rot{color:#4a5148}
+.excl{display:flex;gap:11px;align-items:flex-start;background:#dedcd1;border:1px solid #b9b8ab;
+      padding:14px;cursor:pointer;border-radius:2px}
+.excl:hover{border-color:#2e7a56}
+.selo{font-family:'Archivo Narrow',Archivo,sans-serif;font-weight:600;font-size:10.5px;
+      letter-spacing:.1em;text-transform:uppercase;color:#25634a;border:1px solid #96a998;
+      padding:1px 5px;border-radius:2px}
+.lista{display:flex;flex-direction:column;gap:1px;background:#b9b8ab;border:1px solid #b9b8ab;border-radius:2px}
+.lista label{display:grid;grid-template-columns:15px 10px 1fr auto;gap:9px;align-items:center;
+             background:#dedcd1;padding:9px 12px;cursor:pointer;font-size:13.5px}
+.lista label:hover{background:#d6d4c8}
+.bolinha{width:10px;height:10px;border-radius:50%}
+.acao{font-family:'Archivo Narrow',Archivo,sans-serif;font-size:11.5px;letter-spacing:.08em;
+      text-transform:uppercase;font-weight:600;background:none;border:0;padding:0;color:#a3541f;
+      cursor:pointer;text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+.go{font-family:'Archivo Narrow',Archivo,sans-serif;font-size:15.5px;letter-spacing:.06em;
+    text-transform:uppercase;font-weight:700;background:#1c4d38;color:#f2f7f3;border:0;padding:16px;
+    cursor:pointer;border-radius:2px;width:100%;margin-top:6px;text-align:center;display:block;
+    text-decoration:none}
+.go:hover{background:#2e7a56;color:#f2f7f3}
+#flut{position:fixed;right:28px;bottom:28px;z-index:20;display:flex;align-items:center;gap:11px;
+      font-family:'Archivo Narrow',Archivo,sans-serif;font-size:13.5px;letter-spacing:.08em;
+      text-transform:uppercase;font-weight:700;background:#1c4d38;color:#f2f7f3;border:1px solid #3f7a5c;
+      padding:14px 20px;cursor:pointer;border-radius:2px;box-shadow:0 6px 24px rgba(0,0,0,.45);
+      white-space:nowrap}
+#flut:hover{background:#2e7a56}
+@media (max-width:640px){ .sec{padding:56px 6vw} #entrar{padding:56px 6vw 48px} #flut{right:14px;bottom:14px} }
+</style>
+</head>
+<body>
+
+<!-- ————————————————— herói ————————————————— -->
+<section style="position:relative;min-height:100vh;display:flex;flex-direction:column;
+                justify-content:space-between;gap:40px;padding:44px 6vw 40px;align-items:center">
+  <div style="position:absolute;inset:0;overflow:hidden;pointer-events:none">
+    <canvas id="fundo" style="position:absolute;inset:0;width:100%;height:100%;opacity:.55"></canvas>
+    <div style="position:absolute;inset:0;background:radial-gradient(120% 100% at 50% 42%,rgba(15,21,18,.34) 0%,rgba(15,21,18,.84) 58%,#0f1512 100%)"></div>
+  </div>
+
+  <div style="position:relative;display:flex;justify-content:space-between;align-items:baseline;
+              gap:24px;border-bottom:1px solid #26332c;padding-bottom:12px;width:100%;max-width:1120px;flex-wrap:wrap">
+    <span class="nar" style="font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#7fc49a;font-weight:600">Iniciação científica · FGV ECMI</span>
+    <span class="nar" style="font-size:12px;letter-spacing:.06em;color:#7d857c">Explorador interativo · eleições municipais de 2024</span>
+  </div>
+
+  <div style="position:relative;display:flex;flex-direction:column;gap:30px;width:100%;
+              max-width:1120px;align-items:center;text-align:center">
+    <h1 class="nar" style="font-weight:700;font-size:clamp(48px,8vw,104px);line-height:1.08;letter-spacing:-.02em">O <span style="display:inline-block;border-bottom:8px solid #5a9fd4">Voto</span>, A <span style="display:inline-block;border-bottom:8px solid #d14a3c">Bala</span> e a <span style="display:inline-block;border-bottom:8px solid #4f9d4a">Floresta</span></h1>
+    <p style="font-size:clamp(17px,1.6vw,22px);line-height:1.45;color:#c9cec5;max-width:52ch;text-wrap:pretty">Uma análise de enquadramento da cobertura eleitoral em veículos locais da Amazônia Legal.</p>
+    <p style="font-size:16px;line-height:1.6;color:#9aa298;max-width:60ch;text-wrap:pretty"><span id="p-base">75.363</span> publicações de Instagram, <span id="p-perfis">195</span> veículos jornalísticos, as nove capitais da Amazônia Legal, entre 16 de agosto e 30 de outubro de 2024. Cada ponto ao fundo é uma publicação real; a distância entre eles é distância de assunto.</p>
+  </div>
+
+  <div style="position:relative;display:flex;justify-content:space-between;align-items:flex-end;
+              gap:24px;flex-wrap:wrap;width:100%;max-width:1120px">
+    <div class="nar" style="display:flex;flex-wrap:wrap;gap:6px 36px;font-size:13px;color:#7d857c">
+      <span>Erik Rolin · bolsista PIBIC</span>
+      <span>Orientação: prof. Eurico Matos</span>
+    </div>
+    <span class="nar" style="display:flex;align-items:center;gap:9px;font-size:12px;letter-spacing:.12em;
+          text-transform:uppercase;color:#7fc49a;font-weight:600"><span style="display:inline-block;animation:desce 2.2s ease-in-out infinite">↓</span>Desça para entender o projeto</span>
+  </div>
+</section>
+
+<!-- ————————————————— o que está aqui ————————————————— -->
+<section class="sec" style="background:#0f1512;border-top:1px solid #26332c;gap:40px">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:48px;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <h2 class="rot">O que está aqui</h2>
+      <p class="nar" style="font-size:clamp(20px,2vw,28px);line-height:1.3;font-weight:600;color:#e8e6de;max-width:34ch;text-wrap:pretty">A pergunta não é apenas sobre o que a mídia local fala, mas como ela delimita o que mostra.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;color:#9aa298;font-size:15.5px;line-height:1.65">
+      <p style="text-wrap:pretty">O corpus são todas as publicações de Instagram de <span id="p-perfis2">195</span> perfis de veículos jornalísticos sediados em Belém, Boa Vista, Cuiabá, Macapá, Manaus, Palmas, Porto Velho, Rio Branco e São Luís, no período eleitoral de 2024.</p>
+      <p style="text-wrap:pretty">É um território habitado, desigual e mediado: blogs de uma pessoa só ao lado de jornais centenários, redações precárias ao lado de portais que reproduzem release de assessoria. O referencial é a Teoria do Enquadramento — Goffman, Entman, Gamson &amp; Modigliani, Gitlin, Tuchman.</p>
+    </div>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:4px 52px;border-top:1px solid #26332c;border-bottom:1px solid #26332c;padding:6px 0">
+    <div class="kpi"><span class="v num" id="k-base">—</span><span class="k">Publicações</span></div>
+    <div class="kpi"><span class="v num" id="k-perfis">—</span><span class="k">Veículos</span></div>
+    <div class="kpi"><span class="v num">9</span><span class="k">Capitais</span></div>
+    <div class="kpi"><span class="v num" id="k-cl">—</span><span class="k">Clusters</span></div>
+    <div class="kpi"><span class="v num" id="k-tm">—</span><span class="k">Macro-temas</span></div>
+    <div class="kpi"><span class="v num" id="k-dias">—</span><span class="k">Dias de coleta</span></div>
+  </div>
+</section>
+
+<!-- ————————————————— como foi feito ————————————————— -->
+<section class="sec" style="background:#131a16">
+  <h2 class="rot">Como foi feito</h2>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:#26332c;border:1px solid #26332c">
+    <div class="card"><span class="n">01</span><span class="t">Coleta</span><span class="c">Todas as publicações de <span id="p-perfis3">195</span> perfis das nove capitais, de 16 de agosto a 30 de outubro de 2024, executada pelo DAPP Lab da FGV.</span></div>
+    <div class="card"><span class="n">02</span><span class="t">Leitura por modelo</span><span class="c">BERTopic com embeddings multilíngues transforma cada texto em posição num espaço de sentido.</span></div>
+    <div class="card"><span class="n">03</span><span class="t">120 clusters</span><span class="c">Agrupamentos emergentes, não categorias definidas de antemão. <span id="p-nc">8.098</span> publicações ficaram sem cluster.</span></div>
+    <div class="card"><span class="n">04</span><span class="t">13 macro-temas</span><span class="c">Reunião interpretativa dos clusters — a única etapa em que a decisão é humana e declarada como tal.</span></div>
+  </div>
+</section>
+
+<!-- ————————————————— as três visões ————————————————— -->
+<section class="sec" style="background:#16201b">
+  <div style="display:flex;flex-direction:column;gap:12px;max-width:60ch">
+    <h2 class="rot">As três visões</h2>
+    <p style="font-size:16px;line-height:1.6;color:#9aa298;text-wrap:pretty">A mesma base, lida de três distâncias diferentes. Dá para filtrar por macro-tema, estado, suporte do veículo, perfil de publicação, engajamento, período e busca textual — e exportar o recorte em PNG e CSV.</p>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px">
+    <div class="card" style="border:1px solid #26332c"><span class="nar" style="font-size:20px;font-weight:700;color:#e8e6de">Mapa de posts</span><span class="c">As 75 mil publicações, uma por ponto. Clicar num ponto abre o texto, o veículo e as cinco publicações mais parecidas.</span></div>
+    <div class="card" style="border:1px solid #26332c"><span class="nar" style="font-size:20px;font-weight:700;color:#e8e6de">Mapa de clusters</span><span class="c">Os 120 agrupamentos, com área proporcional ao volume de publicações de cada um.</span></div>
+    <div class="card" style="border:1px solid #26332c"><span class="nar" style="font-size:20px;font-weight:700;color:#e8e6de">Rede</span><span class="c">Quais macro-temas se aproximam entre si e com que força. É calculada uma vez sobre a base inteira.</span></div>
+  </div>
+</section>
+
+<!-- ————————————————— limitações ————————————————— -->
+<section class="sec" style="background:#1b2620;gap:32px">
+  <div style="display:flex;flex-direction:column;gap:12px;max-width:64ch">
+    <h2 class="rot" style="color:#d14a3c">O que a ferramenta não permite afirmar</h2>
+    <p style="font-size:16px;line-height:1.6;color:#a8afa4;text-wrap:pretty">Estes avisos não são rodapé legal: são parte do argumento. Dentro da ferramenta, cada um aparece junto do controle a que se refere, não escondido no fim da página.</p>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:24px">
+    <div class="lim"><b>Proximidade visual não é proximidade semântica</b><span>Apenas 7,5% dos vizinhos mais próximos no espaço original também são os mais próximos na tela. Leia distância como indício.</span></div>
+    <div class="lim"><b>Engajamento seleciona veículo grande</b><span>No decil mais engajado, dois veículos concentram 48% das publicações. Filtrar por engajamento é, em boa medida, filtrar por porte.</span></div>
+    <div class="lim"><b>Rádio e TV descrevem um veículo</b><span>Televisão tem 352 publicações e rádio 1.520, sendo 85% de um único veículo. Diferenças ali não descrevem um suporte.</span></div>
+  </div>
+</section>
+
+<div style="height:120px;background:linear-gradient(180deg,#1b2620 0%,#5c655c 46%,#a8a99c 74%,#cfcdc0 100%)"></div>
+
+<!-- ————————————————— configurar o recorte ————————————————— -->
+<section id="entrar" style="display:flex;flex-direction:column;gap:36px">
+  <div style="display:flex;flex-direction:column;gap:10px;max-width:60ch">
+    <h2 class="rot">Configure o recorte inicial</h2>
+    <p class="nar" style="font-size:clamp(19px,1.8vw,25px);line-height:1.35;font-weight:600;text-wrap:pretty">Você pode entrar direto, com o recorte padrão da pesquisa, ou decidir agora o que vai aparecer no mapa.</p>
+    <p style="font-size:14.5px;line-height:1.6;color:#4a5148;text-wrap:pretty">Tudo é reversível depois, e a ferramenta declara permanentemente o recorte em vigor.</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:28px;align-items:start">
+
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div style="background:#0f1512;color:#e8e6de;padding:22px 24px;display:flex;flex-direction:column;gap:10px;border-radius:2px">
+        <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+          <span class="num" id="total" style="font-size:clamp(40px,4.4vw,54px);line-height:1;color:#7fc49a">—</span>
+          <span class="nar" style="font-size:13.5px;color:#9aa298">de <span id="p-base2">75.363</span> publicações</span>
+        </div>
+        <div style="height:4px;background:#26332c;border-radius:2px;overflow:hidden"><div id="barra" style="height:100%;background:#2e7a56;width:100%"></div></div>
+        <span class="nar" id="nota" style="font-size:12.5px;line-height:1.45;color:#9aa298"></span>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span class="nar" style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#4a5148;font-weight:700">Exclusões metodológicas</span>
+        <span style="font-size:13px;line-height:1.5;color:#4a5148;text-wrap:pretty">As duas vêm <strong style="font-weight:600">ligadas por padrão</strong>: a ferramenta esconde estes dados por decisão de método, e você precisa saber disso desde já.</span>
+        <label class="excl">
+          <input type="checkbox" id="cbPb" checked style="margin:2px 0 0;width:15px;height:15px;flex:none">
+          <span style="display:flex;flex-direction:column;gap:4px">
+            <span style="font-size:14px;font-weight:600;display:flex;align-items:center;gap:7px;flex-wrap:wrap">Só Amazônia Legal <span class="selo nar">padrão</span></span>
+            <span style="font-size:12px;line-height:1.5;color:#4a5148;text-wrap:pretty">Deixa de fora <span id="p-pb">3.085</span> publicações da Paraíba que a coleta trouxe por engano — o estado não pertence à Amazônia Legal.</span>
+          </span>
+        </label>
+        <label class="excl">
+          <input type="checkbox" id="cbNc" checked style="margin:2px 0 0;width:15px;height:15px;flex:none">
+          <span style="display:flex;flex-direction:column;gap:4px">
+            <span style="font-size:14px;font-weight:600;display:flex;align-items:center;gap:7px;flex-wrap:wrap">Excluir não classificadas <span class="selo nar">padrão</span></span>
+            <span style="font-size:12px;line-height:1.5;color:#4a5148;text-wrap:pretty">Deixa de fora <span id="p-nc2">8.098</span> publicações que o modelo não conseguiu atribuir a nenhum cluster.</span>
+          </span>
+        </label>
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:flex-start;border-left:3px solid #8f2f27;background:#ddd6cd;padding:12px 14px;border-radius:2px">
+        <span style="font-size:12.5px;line-height:1.5;color:#3b423a;text-wrap:pretty"><strong style="font-weight:600">Proximidade visual não é proximidade semântica.</strong> Apenas 7,5% dos vizinhos mais próximos no espaço original também são os mais próximos na tela.</span>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px">
+        <span class="nar" style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#4a5148;font-weight:700">Macro-temas</span>
+        <button type="button" class="acao" id="bTodos">Desmarcar todos</button>
+      </div>
+      <div class="lista" id="temas"></div>
+      <span style="font-size:12px;line-height:1.5;color:#4a5148;text-wrap:pretty">Estes são os volumes totais na base. Dentro da ferramenta os contadores passam a ser facetados: cada um considera os outros filtros já ativos.</span>
+      <a class="go" id="bEntrar" href="explorador.html">Entrar no explorador</a>
+      <div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap;padding-top:2px">
+        <a class="nar" href="explorador.html?ajuda=metodo" style="font-size:12.5px;color:#3b423a">Metodologia</a>
+        <a class="nar" href="explorador.html?ajuda=limites" style="font-size:12.5px;color:#3b423a">Limitações</a>
+        <a class="nar" href="explorador.html?ajuda=gloss" style="font-size:12.5px;color:#3b423a">Glossário</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="nar" style="display:flex;flex-wrap:wrap;gap:8px 36px;border-top:1px solid #b9b8ab;padding-top:20px;font-size:12.5px;color:#4a5148">
+    <span>O Voto, A Bala e a Floresta · Erik Rolin</span>
+    <span>Orientação: prof. Eurico Matos · FGV ECMI</span>
+    <span>Iniciação Científica PIBIC · 2025–2026</span>
+  </div>
+</section>
+
+<button type="button" id="flut">Configurar recorte e entrar <span style="font-size:15px;flex:none">↓</span></button>
+
+<script>
+const fmt = n => n.toLocaleString('pt-BR');
+let META = null, sel = [];
+
+/* ---------- fundo do herói ----------
+   Nuvens gaussianas, uma por macro-tema, com as cores e os volumes reais. É decoração
+   honesta: a forma é sintética, as proporções não. */
+const CENTROS = [[.30,.34],[.66,.26],[.80,.62],[.44,.20],[.16,.66],[.58,.50],[.34,.62],
+                 [.72,.80],[.50,.76],[.88,.38],[.24,.86],[.62,.66],[.44,.42]];
+function pintarFundo(){
+  const cv = document.getElementById('fundo');
+  if(!cv || !META) return;
+  const dpr = window.devicePixelRatio || 1;
+  const w = cv.clientWidth, h = cv.clientHeight;
+  if(!w || !h) return;
+  cv.width = Math.round(w*dpr); cv.height = Math.round(h*dpr);
+  const ctx = cv.getContext('2d');
+  ctx.imageSmoothingEnabled = false;
+  ctx.fillStyle = '#0f1512'; ctx.fillRect(0,0,cv.width,cv.height);
+  /* mulberry32: um LCG comum estoura 2^53 em JS e colapsa num ciclo curto, repetindo pontos */
+  let seed = 20241016;
+  const rnd = () => { seed = (seed + 0x6D2B79F5)|0; let t = Math.imul(seed ^ (seed>>>15), 1|seed);
+    t = (t + Math.imul(t ^ (t>>>7), 61|t)) ^ t; return ((t ^ (t>>>14))>>>0)/4294967296; };
+  const lado = Math.max(2, Math.round(2*dpr));
+  const total = 18000, soma = META.temas.reduce((a,t)=>a+t.n, 0), maior = META.temas[0].n;
+  ctx.globalAlpha = .85;
+  META.temas.forEach((t,i)=>{
+    const n = Math.round(total*t.n/soma), c = CENTROS[i] || [.5,.5];
+    const esp = 0.06 + 0.04*(t.n/maior);
+    ctx.fillStyle = t.cor;
+    for(let k=0;k<n;k++){
+      const a = rnd()*Math.PI*2, r = Math.sqrt(-2*Math.log(1-rnd()*0.999))*esp;
+      ctx.fillRect(Math.round((c[0]+Math.cos(a)*r)*cv.width),
+                   Math.round((c[1]+Math.sin(a)*r*.9)*cv.height), lado, lado);
+    }
+  });
+  ctx.globalAlpha = 1;
+}
+
+/* ---------- prévia do total ---------- */
+function total(){
+  const c = META.corpus;
+  const semPb = document.getElementById('cbPb').checked;
+  const semNc = document.getElementById('cbNc').checked;
+  let n = META.temas.reduce((a,t,i)=> a + (sel[i] ? t.n : 0), 0);   // os volumes por tema são da Amazônia Legal
+  if(!semNc) n += c.naoClass;
+  if(!semPb){
+    /* As publicações da Paraíba não estão distribuídas por macro-tema nesta prévia. Com todos
+       os temas marcados a soma é exata; com alguns desmarcados vira proporção declarada. */
+    const pb = semNc ? c.paraibaClass : c.paraiba;
+    n += sel.every(Boolean) ? pb
+       : Math.round(pb * (n / Math.max(1, semNc ? c.classificadas : c.analitico)));
+  }
+  return n;
+}
+const denominador = () => {
+  const c = META.corpus;
+  return document.getElementById('cbPb').checked ? c.analitico : c.analitico + c.paraiba;
+};
+function atualizar(){
+  const c = META.corpus;
+  const semPb = document.getElementById('cbPb').checked;
+  const semNc = document.getElementById('cbNc').checked;
+  const todos = sel.every(Boolean), nSel = sel.filter(Boolean).length;
+  const n = total();
+  /* Com a Paraíba de volta e algum macro-tema desmarcado, a soma vira proporcional:
+     em vez de fingir precisão, o número se declara estimado. */
+  const estimado = !semPb && !todos && nSel > 0;
+  document.getElementById('total').textContent = (estimado ? '≈ ' : '') + fmt(n);
+  document.getElementById('p-base2').textContent = fmt(denominador());
+  document.getElementById('barra').style.width =
+    Math.max(1, Math.min(100, Math.round(n / denominador() * 100))) + '%';
+  let nota;
+  if(nSel === 0){
+    nota = semNc ? 'Nenhum macro-tema selecionado: o mapa entraria vazio.'
+                 : 'Nenhum macro-tema selecionado: só as ' + fmt(c.naoClass) + ' não classificadas entrariam no mapa.';
+  } else {
+    nota = 'Em vigor: ' + [
+      semPb ? 'só Amazônia Legal' : 'com Paraíba',
+      semNc ? 'sem não classificadas' : 'com não classificadas',
+      todos ? 'todos os 13 macro-temas' : nSel + ' de 13 macro-temas'
+    ].join(' · ') + '.';
+    if(estimado) nota += ' A soma da Paraíba é proporcional na prévia; o valor exato aparece ao entrar.';
+  }
+  document.getElementById('nota').textContent = nota;
+  document.getElementById('bTodos').textContent = todos ? 'Desmarcar todos' : 'Marcar todos';
+  document.getElementById('bEntrar').href = 'explorador.html?' + new URLSearchParams({
+    pb: semPb ? 1 : 0, nc: semNc ? 1 : 0,
+    t: todos ? '' : sel.map((v,i)=>v?i:-1).filter(i=>i>=0).join(',')
+  }).toString().replace(/&?t=$/, '');
+}
+
+/* ---------- botão flutuante ---------- */
+function checarBotao(){
+  const el = document.getElementById('entrar'), b = document.getElementById('flut');
+  b.style.display = el.getBoundingClientRect().top < window.innerHeight*0.72 ? 'none' : 'flex';
+}
+document.getElementById('flut').onclick = () => {
+  const el = document.getElementById('entrar');
+  window.scrollTo({ top: el.getBoundingClientRect().top + window.pageYOffset - 8, behavior:'smooth' });
+};
+window.addEventListener('scroll', checarBotao, { passive:true });
+window.addEventListener('resize', checarBotao);
+
+/* ---------- arranque ---------- */
+fetch('dados/meta.json').then(r => r.json()).then(m => {
+  META = m;
+  const c = m.corpus;
+  sel = m.temas.map(() => true);
+  const põe = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v; };
+  ['p-base','p-base2'].forEach(id => põe(id, fmt(c.analitico)));
+  ['p-perfis','p-perfis2','p-perfis3'].forEach(id => põe(id, fmt(c.perfis)));
+  ['p-nc','p-nc2'].forEach(id => põe(id, fmt(c.naoClass)));
+  põe('p-pb', fmt(c.paraiba));
+  põe('k-base', fmt(c.analitico));  põe('k-perfis', fmt(c.perfis));
+  põe('k-cl', fmt(m.clusters.length)); põe('k-tm', fmt(m.temas.length));
+  põe('k-dias', fmt(c.dias));
+  document.getElementById('temas').innerHTML = m.temas.map((t,i)=>
+    `<label><input type="checkbox" data-i="${i}" checked style="width:15px;height:15px;margin:0">
+     <span class="bolinha" style="background:${t.cor}"></span>
+     <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.nome}</span>
+     <span style="font-variant-numeric:tabular-nums;color:#4a5148;font-size:12.5px">${fmt(t.n)}</span></label>`).join('');
+  document.querySelectorAll('#temas input').forEach(el => el.onchange = () => {
+    sel[+el.dataset.i] = el.checked; atualizar();
+  });
+  document.getElementById('bTodos').onclick = () => {
+    const v = !sel.every(Boolean);
+    sel = sel.map(() => v);
+    document.querySelectorAll('#temas input').forEach(el => el.checked = v);
+    atualizar();
+  };
+  ['cbPb','cbNc'].forEach(id => document.getElementById(id).onchange = atualizar);
+  atualizar(); pintarFundo(); checarBotao();
+}).catch(e => {
+  document.getElementById('nota').textContent =
+    'Não foi possível carregar os números do corpus. O explorador continua acessível.';
+  console.error(e);
+});
+
+/* ResizeObserver, não só window.resize: um canvas que só pinta no resize nasce em branco */
+if(window.ResizeObserver) new ResizeObserver(() => pintarFundo()).observe(document.getElementById('fundo'));
+</script>
+</body>
+</html>

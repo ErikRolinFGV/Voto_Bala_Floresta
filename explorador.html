@@ -1,0 +1,1861 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Explorador · O Voto, A Bala e a Floresta</title>
+<meta name="description" content="Explorador interativo das 75.363 publicações de veículos de mídia local da Amazônia Legal nas eleições municipais de 2024.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Archivo+Narrow:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230f1512'/%3E%3Ccircle cx='11' cy='12' r='4' fill='%235a9fd4'/%3E%3Ccircle cx='21' cy='14' r='4' fill='%23d14a3c'/%3E%3Ccircle cx='16' cy='22' r='4' fill='%234f9d4a'/%3E%3C/svg%3E">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0f1512;color:#1a1f1c;font-family:Archivo,Helvetica,Arial,sans-serif;
+     font-size:13px;line-height:1.45;-webkit-font-smoothing:antialiased;overflow:hidden}
+a{color:#1c4d38;text-decoration:underline;text-underline-offset:2px}
+a:hover{color:#2e7a56}
+h1,h2,h3,p{margin:0}
+input[type=checkbox],input[type=radio],input[type=range]{accent-color:#2e7a56}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#bcbaad;border-radius:5px}
+::-webkit-scrollbar-track{background:transparent}
+.nar{font-family:'Archivo Narrow',Archivo,Helvetica,Arial,sans-serif}
+.tab{font-family:'Archivo Narrow',Archivo,sans-serif;font-size:12px;letter-spacing:.06em;
+     text-transform:uppercase;font-weight:600;padding:6px 12px;border:0;border-radius:2px;
+     cursor:pointer;white-space:nowrap;background:transparent;color:#9aa298}
+.tab.on{background:#2e7a56;color:#f2f7f3}
+.bex{font-family:'Archivo Narrow',Archivo,sans-serif;font-size:11.5px;letter-spacing:.06em;
+     text-transform:uppercase;font-weight:600;padding:6px 11px;border:1px solid #3f5a4c;
+     background:transparent;color:#c9cec5;cursor:pointer;border-radius:2px;white-space:nowrap}
+.bex:hover{border-color:#7fc49a;color:#7fc49a}
+/* ---------- grade principal ---------- */
+#app{height:100vh;display:grid;grid-template-rows:56px 1fr;overflow:hidden;
+     grid-template-columns:minmax(0,1fr) minmax(0,2fr) 0}
+header{grid-column:1/-1;display:flex;align-items:center;gap:20px;padding:0 16px;background:#16201b;
+       border-bottom:1px solid #2c3a33;color:#e8e6de}
+header>*{flex:none}
+#esq{grid-column:1;grid-row:2;background:#e6e4da;border-right:1px solid #c3c1b4;overflow:hidden auto;display:block}
+#dir{grid-column:3;grid-row:2;background:#e6e4da;border-left:1px solid #c3c1b4;overflow:hidden auto;display:none}
+main{grid-column:2;grid-row:2;position:relative;background:#0f1512;display:grid;
+     grid-template-rows:minmax(0,1fr) 116px;overflow:hidden}
+/* ---------- blocos de painel ---------- */
+.bloco{padding:14px;display:flex;flex-direction:column;gap:10px;border-bottom:1px solid #c3c1b4}
+.escuro{background:#0f1512;color:#e8e6de}
+.cab{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 10px;min-width:0}
+.rot{font-family:'Archivo Narrow',Archivo,sans-serif;font-size:11px;letter-spacing:.14em;
+     text-transform:uppercase;color:#4a5148;font-weight:700;min-width:0;cursor:help}
+.rot.v{color:#7fc49a}
+.sub{font-family:'Archivo Narrow',Archivo,sans-serif;font-size:11px;letter-spacing:.1em;
+     text-transform:uppercase;color:#6b7169;font-weight:600;cursor:help;white-space:nowrap}
+.lnk{font-family:'Archivo Narrow',Archivo,sans-serif;font-size:10.5px;letter-spacing:.08em;
+     text-transform:uppercase;font-weight:600;background:none;border:0;padding:0;color:#a3541f;
+     cursor:pointer;text-decoration:underline;white-space:nowrap;flex:none}
+.lnk.v{color:#7fc49a}
+.lista{display:flex;flex-direction:column;gap:1px;background:#d5d3c6;border:1px solid #d5d3c6}
+.lista>*{background:#f0efe7;padding:6px 8px;align-items:center;gap:8px;cursor:pointer;font-size:12px;
+         display:grid;color:#1a1f1c}
+.lista>*:hover{background:#e9e7dd}
+.lista .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lista .qt{font-variant-numeric:tabular-nums;color:#6b7169;font-size:11.5px;white-space:nowrap}
+.bola{width:9px;height:9px;border-radius:50%}
+.so{font-family:'Archivo Narrow',Archivo,sans-serif;font-size:9.5px;letter-spacing:.08em;
+    text-transform:uppercase;font-weight:700;color:#a3541f;background:transparent;
+    border:1px solid #cfc6b4;padding:1px 5px;border-radius:2px;cursor:pointer;white-space:nowrap}
+.so:hover{border-color:#a3541f;background:#e9e2d4}
+.aviso{border-left:3px solid #8f2f27;background:#eee6e2;padding:8px 10px;font-size:11px;
+       line-height:1.45;color:#3b423a;text-wrap:pretty}
+.caixa{background:#f0efe7;border:1px solid #d5d3c6;padding:9px 10px;display:flex;
+       flex-direction:column;gap:7px}
+.nota{font-size:11px;line-height:1.45;color:#6b7169;text-wrap:pretty}
+.btnp{font-family:'Archivo Narrow',Archivo,sans-serif;font-size:11.5px;letter-spacing:.08em;
+      text-transform:uppercase;font-weight:700;background:#1c4d38;color:#f2f7f3;border:0;padding:11px;
+      cursor:pointer;border-radius:2px;width:100%}
+.btnp:hover{background:#2e7a56}
+.selo{font-family:'Archivo Narrow',Archivo,sans-serif;font-size:9.5px;letter-spacing:.1em;
+      text-transform:uppercase;font-weight:700;background:transparent;padding:1px 5px;
+      border-radius:2px;white-space:nowrap;cursor:pointer;border:1px solid}
+.selo:hover{background:#1c2a22}
+.chip{font-family:'Archivo Narrow',Archivo,sans-serif;font-size:9.5px;letter-spacing:.1em;
+      text-transform:uppercase;font-weight:700;color:#1c4d38;border:1px solid #9dbfab;
+      background:#e2ece5;padding:1px 5px;border-radius:2px;white-space:nowrap;cursor:help}
+input[type=text],select{font-family:Archivo,sans-serif;font-size:12.5px;padding:8px 10px;
+      border:1px solid #c3c1b4;background:#f0efe7;color:#1a1f1c;border-radius:2px;width:100%}
+.barra{height:3px;background:#26332c;border-radius:2px;overflow:hidden}
+.barra>i{display:block;height:100%;background:#2e7a56}
+/* ---------- overlays do mapa ---------- */
+.puxar{position:absolute;top:50%;transform:translateY(-50%);align-items:center;gap:8px;
+       background:#e6e4da;color:#1a1f1c;border:1px solid #c3c1b4;cursor:pointer;padding:14px 9px;
+       font-family:'Archivo Narrow',Archivo,sans-serif;font-size:11.5px;letter-spacing:.14em;
+       text-transform:uppercase;font-weight:700;writing-mode:vertical-rl;
+       box-shadow:0 4px 18px rgba(0,0,0,.4);display:none;z-index:5}
+.puxar:hover{background:#f0efe7}
+.pilula{font-family:'Archivo Narrow',Archivo,sans-serif;font-size:11px;color:#7d857c;
+        background:rgba(15,21,18,.82);border:1px solid #2c3a33;padding:5px 9px;border-radius:2px;
+        white-space:nowrap}
+/* ---------- ajuda ---------- */
+#ajuda{display:none;position:fixed;inset:0;z-index:60;background:rgba(8,12,10,.72);
+       align-items:center;justify-content:center;padding:32px}
+#ajuda .cx{width:100%;max-width:880px;max-height:100%;background:#0f1512;border:1px solid #2c3a33;
+       border-radius:3px;display:grid;grid-template-rows:auto auto minmax(0,1fr);
+       box-shadow:0 24px 80px rgba(0,0,0,.6);overflow:hidden}
+#ajuda .pg{display:none;flex-direction:column;gap:22px}
+#ajuda .pg.on{display:flex}
+#ajuda h3{font-family:'Archivo Narrow',Archivo,sans-serif;font-size:17px;font-weight:600;color:#e8e6de}
+#ajuda p{font-size:13.5px;line-height:1.6;color:#c9cec5;text-wrap:pretty}
+#ajuda .grupo{display:flex;flex-direction:column;gap:9px}
+#ajuda .item{display:grid;grid-template-columns:14px minmax(0,1fr);gap:9px;align-items:start;
+       font-size:13.5px;line-height:1.55;color:#c9cec5}
+#ajuda .item>b{color:#7fc49a;font-family:'Archivo Narrow',Archivo,sans-serif;font-weight:700}
+#ajuda strong{color:#e8e6de;font-weight:600}
+#ajuda .destaque{display:flex;gap:10px;border-left:3px solid #d14a3c;background:#1a1210;padding:11px 13px;
+       font-size:13px;line-height:1.6;color:#c9cec5;text-wrap:pretty}
+#ajuda .destaque.ok{border-left-color:#2e7a56;background:#111a15}
+#ajuda table{width:100%;border-collapse:collapse;border-top:1px solid #2c3a33}
+#ajuda th{font-family:'Archivo Narrow',Archivo,sans-serif;font-size:11px;letter-spacing:.1em;
+       text-transform:uppercase;color:#7d857c;font-weight:600;padding:7px 0;text-align:left;
+       border-bottom:1px solid #26332c}
+#ajuda td{font-size:13px;line-height:1.5;color:#c9cec5;padding:7px 0;border-bottom:1px solid #1c2620;
+       vertical-align:top}
+#ajuda td.n{text-align:right;font-variant-numeric:tabular-nums;font-family:'Archivo Narrow',Archivo,sans-serif;
+       font-weight:600;color:#e8e6de;white-space:nowrap;padding-left:20px}
+#ajuda td.t{color:#e8e6de;font-weight:600;width:200px}
+.tecla{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;
+       padding:0 5px;font-family:'Archivo Narrow',Archivo,sans-serif;font-size:12px;font-weight:700;
+       color:#e8e6de;background:#1c2a22;border:1px solid #3f5a4c;border-radius:3px}
+/* ---------- dica ---------- */
+#dica{position:fixed;z-index:40;max-width:290px;background:#0f1512;color:#e8e6de;
+      border:1px solid #3f5a4c;padding:11px 13px;border-radius:2px;
+      box-shadow:0 8px 28px rgba(0,0,0,.5);pointer-events:none;display:none}
+#dica b{display:block;font-family:'Archivo Narrow',Archivo,sans-serif;font-size:11px;
+      letter-spacing:.1em;text-transform:uppercase;color:#7fc49a;font-weight:700;padding-bottom:4px}
+#dica span{display:block;font-size:12px;line-height:1.5;color:#c9cec5}
+/* ---------- carregamento ---------- */
+#carga{position:fixed;inset:0;z-index:80;background:#0f1512;color:#e8e6de;display:flex;
+       flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:32px}
+#carga .t{font-family:'Archivo Narrow',Archivo,sans-serif;font-size:26px;font-weight:700}
+#carga .b{width:min(360px,80vw);height:3px;background:#26332c;border-radius:2px;overflow:hidden}
+#carga .b>i{display:block;height:100%;width:0;background:#2e7a56;transition:width .25s}
+#carga .s{font-family:'Archivo Narrow',Archivo,sans-serif;font-size:12px;letter-spacing:.1em;
+       text-transform:uppercase;color:#7d857c}
+@media (max-width:900px){
+  #app{grid-template-columns:minmax(0,1fr) !important;grid-template-rows:56px 40vh 1fr}
+  #esq{grid-column:1;grid-row:3;border-right:0;border-top:1px solid #c3c1b4}
+  #dir{grid-column:1;grid-row:3}
+  main{grid-column:1;grid-row:2}
+  .puxar{display:none !important}
+}
+</style>
+</head>
+<body>
+
+<div id="carga">
+  <span class="t">O <span style="border-bottom:4px solid #5a9fd4">Voto</span>, A <span style="border-bottom:4px solid #d14a3c">Bala</span> e a <span style="border-bottom:4px solid #4f9d4a">Floresta</span></span>
+  <div class="b"><i id="cargaBarra"></i></div>
+  <span class="s" id="cargaTexto">carregando o corpus…</span>
+</div>
+
+<div id="app" hidden>
+
+  <header>
+    <a href="index.html" data-dica="inicio" style="display:flex;align-items:center;gap:9px;text-decoration:none;color:#e8e6de;padding:6px 9px;margin-left:-9px;border-radius:2px;border:1px solid transparent" onmouseover="this.style.borderColor='#3f5a4c';this.style.background='#0f1512'" onmouseout="this.style.borderColor='transparent';this.style.background='transparent'">
+      <span class="nar" style="font-size:13px;color:#7fc49a;font-weight:700">↖</span>
+      <span class="nar" style="font-size:15px;font-weight:700;white-space:nowrap;letter-spacing:.01em">O <span style="border-bottom:3px solid #5a9fd4">Voto</span>, A <span style="border-bottom:3px solid #d14a3c">Bala</span> e a <span style="border-bottom:3px solid #4f9d4a">Floresta</span></span>
+    </a>
+    <div style="display:flex;gap:2px;background:#0f1512;padding:3px;border-radius:2px">
+      <button type="button" class="tab on" data-aba="posts" data-dica="abaPosts">Posts</button>
+      <button type="button" class="tab" data-aba="clusters" data-dica="abaClusters">Clusters</button>
+      <button type="button" class="tab" data-aba="rede" data-dica="abaRede">Rede</button>
+    </div>
+    <div data-dica="total" style="display:flex;align-items:baseline;gap:7px;margin-left:auto;white-space:nowrap">
+      <span class="nar" id="hTotal" style="font-size:20px;font-weight:700;color:#7fc49a;font-variant-numeric:tabular-nums">—</span>
+      <span class="nar" style="font-size:12px;color:#9aa298">de <span id="hBase">—</span> em tela</span>
+    </div>
+    <div style="display:flex;gap:7px">
+      <button type="button" class="bex" id="bPng" data-dica="png">PNG</button>
+      <button type="button" class="bex" id="bCsv" data-dica="csv">CSV</button>
+      <button type="button" class="bex" id="bAjuda" data-dica="ajuda" style="font-size:14px;font-weight:700;width:30px;height:30px;padding:0;border-radius:50%;color:#7fc49a">?</button>
+    </div>
+  </header>
+
+  <aside id="esq"></aside>
+
+  <main>
+    <div style="position:relative;overflow:hidden">
+      <canvas id="mapa" style="display:block;width:100%;height:100%;cursor:crosshair"></canvas>
+      <div style="position:absolute;left:14px;top:12px;display:flex;flex-direction:column;gap:3px;pointer-events:none">
+        <span class="nar" id="mTitulo" data-dica="cluster" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#7fc49a;font-weight:700;pointer-events:auto;cursor:help"></span>
+        <span class="nar" id="mSub" style="font-size:11px;color:#7d857c"></span>
+      </div>
+      <div style="position:absolute;left:14px;bottom:12px;display:flex;align-items:center;gap:9px">
+        <span class="pilula" id="mZoom"></span>
+        <button type="button" class="pilula" id="bEnquadrar" data-dica="zoom" style="color:#7fc49a;border-color:#3f5a4c;cursor:pointer;display:none">Enquadrar tudo</button>
+      </div>
+      <div style="position:absolute;right:14px;bottom:12px;display:flex;align-items:center;gap:8px;background:rgba(15,21,18,.82);border:1px solid #2c3a33;padding:6px 10px;border-radius:2px;pointer-events:none">
+        <span class="nar" id="mNota" style="font-size:11px;color:#9aa298"></span>
+      </div>
+      <button type="button" class="puxar" id="puxaEsq" style="left:0;border-left:0;border-radius:0 3px 3px 0">Filtros ↦</button>
+      <button type="button" class="puxar" id="puxaDir" style="right:0;border-right:0;border-radius:3px 0 0 3px">↤ Última publicação</button>
+    </div>
+
+    <div style="position:relative;border-top:1px solid #2c3a33;padding:8px 14px 12px;display:grid;grid-template-rows:auto minmax(0,1fr);gap:6px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
+        <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+          <span class="nar" data-dica="linha" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#7fc49a;font-weight:700;white-space:nowrap;cursor:help">Publicações por dia</span>
+          <span style="display:flex;align-items:baseline;gap:6px;white-space:nowrap">
+            <span class="nar" id="tlA" style="font-size:14px;font-weight:700;color:#e8e6de"></span>
+            <span class="nar" style="font-size:11px;color:#7d857c">até</span>
+            <span class="nar" id="tlB" style="font-size:14px;font-weight:700;color:#e8e6de"></span>
+            <span class="nar" id="tlD" style="font-size:11px;color:#7d857c"></span>
+          </span>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:12px;white-space:nowrap">
+          <span class="nar" style="font-size:11px;color:#7d857c">arraste para recortar por data</span>
+          <button type="button" class="lnk v" id="bTodoPeriodo" style="display:none">Todo o período</button>
+        </div>
+      </div>
+      <canvas id="linha" style="display:block;width:100%;height:100%;cursor:ew-resize"></canvas>
+    </div>
+  </main>
+
+  <aside id="dir"></aside>
+</div>
+
+<div id="ajuda"><div class="cx">
+  <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 16px;padding:16px 20px 12px;border-bottom:1px solid #2c3a33;min-width:0">
+    <span style="display:flex;flex-direction:column;gap:3px;min-width:0">
+      <span class="nar" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#7fc49a;font-weight:700">Ajuda</span>
+      <span class="nar" style="font-size:19px;font-weight:700;color:#e8e6de">O <span style="border-bottom:3px solid #5a9fd4">Voto</span>, A <span style="border-bottom:3px solid #d14a3c">Bala</span> e a <span style="border-bottom:3px solid #4f9d4a">Floresta</span></span>
+    </span>
+    <button type="button" class="bex" id="bFechaAjuda">Fechar · Esc</button>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:2px;padding:10px 20px;border-bottom:1px solid #2c3a33">
+    <button type="button" class="tab on" data-pg="como">Como usar</button>
+    <button type="button" class="tab" data-pg="visoes">As três visões</button>
+    <button type="button" class="tab" data-pg="metodo">Metodologia</button>
+    <button type="button" class="tab" data-pg="limites">Limitações</button>
+    <button type="button" class="tab" data-pg="gloss">Glossário</button>
+  </div>
+  <div style="overflow:hidden auto;padding:22px 24px 28px" id="ajudaCorpo">
+
+    <div class="pg on" id="pg-como">
+      <p>Esta ferramenta permite explorar como os veículos de mídia local da Amazônia Legal enquadraram a cobertura das eleições municipais de 2024 no Instagram. Cada ponto do mapa é uma publicação real; publicações com sentido parecido ficam próximas.</p>
+      <div class="grupo">
+        <h3>O que você está vendo ao abrir</h3>
+        <p>A ferramenta já abre com dois recortes ligados, sinalizados no painel escuro à esquerda. É por isso que o total muda quando você mexe neles:</p>
+        <div style="display:flex;flex-direction:column;gap:8px;padding-left:2px">
+          <span class="item"><b>·</b><span><strong>só Amazônia Legal</strong> — esconde <span class="d-pb"></span> publicações de veículos da Paraíba, que a coleta trouxe por engano e não pertencem ao universo do projeto.</span></span>
+          <span class="item"><b>·</b><span><strong>sem não classificadas</strong> — esconde <span class="d-nc"></span> publicações que o modelo não conseguiu atribuir a nenhum cluster. Desligue a exclusão para vê-las, em cinza.</span></span>
+        </div>
+        <p>Com os dois padrões, aparecem <span class="d-cls"></span> das <span class="d-base"></span> publicações do recorte analítico. O total exibido é sempre uma fração dessa base — nunca a ultrapassa.</p>
+        <p>Cada vez que um filtro altera o total, a mudança é registrada no <strong>histórico de alterações</strong>, no mesmo painel: o que você fez, quantas publicações entraram ou saíram e o total resultante. Serve para refazer o raciocínio de um recorte sem precisar lembrar a ordem dos cliques.</p>
+      </div>
+      <div class="grupo">
+        <h3>Em um minuto</h3>
+        <div style="display:flex;flex-direction:column;gap:8px;padding-left:2px">
+          <span class="item"><b>1</b><span>Clique num ponto para ler a publicação, ver seu veículo e as cinco publicações semanticamente mais próximas.</span></span>
+          <span class="item"><b>2</b><span>Desligue macro-temas na lista à esquerda para isolar um assunto, ou clique em <strong>só</strong> para ver apenas ele.</span></span>
+          <span class="item"><b>3</b><span>Arraste sobre a linha do tempo, embaixo, para recortar um período — a semana da eleição, por exemplo.</span></span>
+          <span class="item"><b>4</b><span>Filtre por estado, suporte ou perfil do veículo para comparar coberturas.</span></span>
+          <span class="item"><b>5</b><span>Exporte a seleção em CSV para analisar por fora.</span></span>
+        </div>
+      </div>
+      <div class="grupo">
+        <h3>Uma sugestão de percurso</h3>
+        <p>Isole <strong style="color:#4f9d4a">Meio ambiente e natureza</strong>, deixe só RO e depois só RR: a proporção de cobertura ambiental varia bastante entre os dois estados. Depois isole <strong style="color:#e08a2e">Cultura e entretenimento</strong>, deixe só PA e arraste a linha do tempo para a semana de 7 a 13 de outubro — é o Círio de Nazaré, e o modelo o encontrou sozinho.</p>
+      </div>
+      <div class="grupo" style="border-top:1px solid #2c3a33;padding-top:18px">
+        <h3>Atalhos</h3>
+        <div style="display:flex;flex-wrap:wrap;gap:10px 22px">
+          <span style="display:flex;align-items:center;gap:7px;font-size:13px;color:#c9cec5;white-space:nowrap"><span class="tecla">1</span><span class="tecla">2</span><span class="tecla">3</span>trocam de visão</span>
+          <span style="display:flex;align-items:center;gap:7px;font-size:13px;color:#c9cec5;white-space:nowrap"><span class="tecla">[</span><span class="tecla">]</span>escondem os painéis</span>
+          <span style="display:flex;align-items:center;gap:7px;font-size:13px;color:#c9cec5;white-space:nowrap"><span class="tecla">0</span>recentra</span>
+          <span style="display:flex;align-items:center;gap:7px;font-size:13px;color:#c9cec5;white-space:nowrap"><span class="tecla">Esc</span>limpa a seleção</span>
+          <span style="display:flex;align-items:center;gap:7px;font-size:13px;color:#c9cec5;white-space:nowrap"><span class="tecla">?</span>abre esta ajuda</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pg" id="pg-visoes">
+      <div class="grupo">
+        <h3>Mapa de posts</h3>
+        <p>As <span class="d-base"></span> publicações do recorte analítico, uma por ponto. A posição vem dos embeddings de cada texto projetados em duas dimensões por MDS de referência sobre os 120 centroides — o mesmo espaço da figura 4 do artigo. Serve para ver a massa, a dispersão e os vazios.</p>
+      </div>
+      <div class="grupo">
+        <h3>Mapa de clusters</h3>
+        <p>Os 120 agrupamentos encontrados pelo modelo, com a área proporcional ao número de publicações dentro do recorte em vigor. O denominador é absoluto: o maior cluster da base inteira. Assim, filtrar encolhe as bolhas de verdade, em vez de só reembaralhar tamanhos.</p>
+      </div>
+      <div class="grupo">
+        <h3>Rede</h3>
+        <p>Os macro-temas (ou os 120 clusters) ligados quando a similaridade de cosseno entre seus centroides supera o limiar escolhido. As posições vêm de stress majorization sobre a matriz inteira de similaridade, calculada uma vez: abrem sempre iguais e mudar o limiar não reembaralha o desenho.</p>
+        <p>A rede não responde aos filtros de veículo, estado, engajamento ou período. As ligações vêm da similaridade entre os centroides, calculada sobre a base analítica inteira; refazer esse cálculo para cada recorte exigiria os vetores de todas as publicações no navegador. Por honestidade, esses controles ficam ocultos nesta aba — só permanecem os que de fato alteram o desenho.</p>
+      </div>
+      <div class="destaque"><span><strong style="color:#e2705f">Cuidado ao ler o mapa.</strong> Proximidade visual não é proximidade semântica. Comprimir 384 dimensões em duas distorce inevitavelmente: apenas 7,5% dos vizinhos mais próximos no espaço original também são os mais próximos na tela. Dois clusters podem parecer colados e não estar entre os seis mais semelhantes. Para afirmar proximidade, use o painel da direita ou a rede, que trabalham com as distâncias reais.</span></div>
+    </div>
+
+    <div class="pg" id="pg-metodo">
+      <div class="grupo"><h3>Amostragem</h3><p>Partiu-se do cadastro do Atlas da Notícia (edições 2024 e 2025), cruzado e verificado manualmente, recortado para as capitais dos nove estados da Amazônia Legal.</p></div>
+      <div class="grupo"><h3>Coleta</h3><p>Executada pelo DAPP Lab da FGV: 78.497 publicações de 211 perfis de Instagram, entre 16 de agosto e 30 de outubro de 2024.</p></div>
+      <div class="grupo">
+        <h3>Do corpus bruto ao recorte analítico</h3>
+        <table><thead><tr><th>Etapa</th><th style="text-align:right">Posts</th></tr></thead>
+        <tbody id="tabCorpus"></tbody></table>
+      </div>
+      <div class="grupo"><h3>Pré-processamento</h3><p>Correção de mojibake com dupla passagem de ftfy, normalização Unicode e três camadas de stopwords próprias: jargão de portal ("link na bio", "arraste"), os handles dos próprios veículos e termos genéricos de alta frequência. Foram sete rodadas de depuração.</p></div>
+      <div class="grupo"><h3>Clusterização</h3><p>BERTopic guiado por sementes temáticas: embeddings multilíngues (paraphrase-multilingual-MiniLM-L12-v2) → UMAP → HDBSCAN → c-TF-IDF. Resultado: 120 clusters, agrupados em 13 macro-temas.</p></div>
+      <div class="grupo">
+        <h3>Tratamento do residual</h3>
+        <p>O HDBSCAN deixou 35,3% das publicações como ruído. Em vez de descartar tudo ou reatribuir tudo, adotou-se um critério de referência interna: uma publicação só é reatribuída a um tópico se sua similaridade ao centroide for maior ou igual ao percentil 10 dos documentos genuínos daquele mesmo tópico.</p>
+        <div class="destaque ok"><span><strong style="color:#7fc49a">Teste de robustez.</strong> A hierarquia dos temas foi recalculada em três cenários — só o núcleo do HDBSCAN, o critério adotado e a reatribuição irrestrita. A correlação de postos entre eles fica entre 0,89 e 0,99: a conclusão não depende dessa decisão.</span></div>
+      </div>
+      <div class="grupo"><h3>Vínculo com o cadastro dos veículos</h3><p>A coleta e o cadastro do Atlas não compartilham chave. O casamento foi feito por comparação de texto em cascata — handle do Instagram, nome do veículo, domínio do site, contenção e similaridade aproximada —, mais revisão manual. Cobertura: 180 dos 195 perfis da Amazônia Legal, ou 93,0% das publicações.</p></div>
+      <div class="grupo"><h3>Campos de enquadramento</h3><p>Os agrupamentos oferecidos em <strong>Destacar campo</strong> não são categorias arbitrárias: cada um foi validado por teste de permutação contra 4.000 conjuntos aleatórios de clusters do mesmo tamanho, medido no nível de cluster. O número ao lado de cada campo é o ganho de coesão interna sobre a similaridade com os clusters de fora.</p></div>
+    </div>
+
+    <div class="pg" id="pg-limites">
+      <p>O que esta ferramenta não permite afirmar, e por quê.</p>
+      <div class="grupo"><h3>Televisão e rádio não sustentam comparação</h3><p>Na Amazônia Legal restam 352 publicações de televisão e 1.520 de rádio. Além de pouco, são concentradas: o segmento "rádio" é 85% um único veículo. Qualquer diferença que apareça nesses dois filtros provavelmente descreve um veículo, não um suporte.</p></div>
+      <div class="grupo"><h3>Engajamento acompanha o tamanho da audiência</h3><p>No decil mais engajado, dois veículos concentram 48% das publicações e o Pará salta de 17% para 37% do total. Filtrar por engajamento seleciona, em boa medida, os veículos grandes. Confira sempre a concentração antes de concluir.</p></div>
+      <div class="grupo"><h3>O segmento é autodeclarado</h3><p>Vem do cadastro do Atlas e pode estar desatualizado. Caso conhecido: o Gazeta Digital, de Cuiabá, está cadastrado como rádio apesar do nome e do formato.</p></div>
+      <div class="grupo"><h3>A UF é a do veículo, não a do assunto</h3><p>Um veículo de Manaus cobrindo Brasília conta como AM.</p></div>
+      <div class="grupo"><h3>7% das publicações não têm veículo identificado</h3><p>São sobretudo perfis pessoais de jornalistas, ausentes do cadastro. Aparecem como <strong>não identificado</strong> e permanecem na análise temática.</p></div>
+      <div class="grupo"><h3>O recorte não é exatamente "9 capitais"</h3><p>Cinco veículos do cadastro têm sede fora da capital — Rondonópolis, Lucas do Rio Verde, Canarana, Ariquemes e Açailândia —, somando <span class="d-int"></span> publicações. Use <strong>só capitais</strong> para excluí-los.</p></div>
+      <div class="grupo"><h3>Não classificadas não são lixo</h3><p>As <span class="d-nc"></span> publicações sem cluster são, em boa parte, textos curtos demais para sustentar um agrupamento. Estão declaradas, não descartadas.</p></div>
+      <div class="grupo"><h3>O texto exibido é o início da legenda</h3><p>Para o site caber num carregamento razoável, cada publicação traz os primeiros 220 caracteres da legenda. O link para o post original está no painel de detalhe, e a análise foi feita sobre o texto inteiro.</p></div>
+    </div>
+
+    <div class="pg" id="pg-gloss">
+      <table><thead><tr><th>Termo</th><th>O que significa aqui</th></tr></thead><tbody>
+        <tr><td class="t">Enquadramento</td><td>Seleção e saliência de aspectos da realidade num texto, de modo a promover certa definição do problema (Entman). É o objeto do projeto.</td></tr>
+        <tr><td class="t">Embedding</td><td>Representação numérica do sentido de um texto — aqui, 384 números por publicação. Textos com sentido parecido têm vetores próximos.</td></tr>
+        <tr><td class="t">Cluster</td><td>Grupo de publicações que o modelo julgou semanticamente semelhantes. São 120.</td></tr>
+        <tr><td class="t">Macro-tema</td><td>Agrupamento interpretativo de clusters, feito pelo pesquisador. São 13.</td></tr>
+        <tr><td class="t">Centroide</td><td>O "centro de massa" de um cluster: a média dos embeddings de suas publicações.</td></tr>
+        <tr><td class="t">Similaridade</td><td>Cosseno entre dois vetores, de −1 a 1. Acima de 0,5 já indica parentesco temático claro.</td></tr>
+        <tr><td class="t">Coesão</td><td>Similaridade média entre os clusters de um mesmo conjunto. Quanto maior, mais o conjunto se comporta como um bloco.</td></tr>
+        <tr><td class="t">Percentil de engajamento</td><td>Posição da publicação na distribuição de engajamento do corpus. Percentil 90 = entre os 10% mais engajados.</td></tr>
+        <tr><td class="t">Nativo digital</td><td>Veículo que declarou publicação em fluxo contínuo, por oposição a quem transpõe a periodicidade do impresso (diário, periódico).</td></tr>
+        <tr><td class="t">Não classificada</td><td>Publicação que o modelo não conseguiu atribuir a nenhum cluster com confiança suficiente.</td></tr>
+      </tbody></table>
+      <div class="grupo" style="border-top:1px solid #2c3a33;padding-top:18px">
+        <h3>Ficha técnica</h3>
+        <p>Iniciação científica (PIBIC) de Erik Rolin, Escola de Comunicação, Mídia e Informação da FGV, sob orientação do prof. Eurico Matos. Coleta executada pelo DAPP Lab da FGV. Amostragem a partir do Atlas da Notícia.</p>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<div id="dica"><b></b><span></span></div>
+
+<script>
+'use strict';
+const fmt = n => n.toLocaleString('pt-BR');
+const esc = s => String(s).replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const CINZA_NC = '#4f5a52', COR_PB = '#8f2f27';
+
+/* ============================ dados ============================ */
+let META = null, N = 0, NT = 0, NC = 0, DIAS = 0, T1 = 0, T2 = 0;
+let PX, PY, PCI, PUF, PSEG, PTV, PLOC, PAL, PDIA, PENG, PEP, PVEI, SIMT, SIMC;
+let PT;                       // macro-tema por publicação (-1 = não classificada)
+let NB = null, TXT = null, LK = null;   // carga tardia
+let CL_MAX = 1;
+
+async function baixar(url, rotulo, frac0, frac1){
+  const r = await fetch(url);
+  if(!r.ok) throw new Error(url + ' → HTTP ' + r.status);
+  const total = +(r.headers.get('content-length') || 0);
+  const leitor = r.body.getReader();
+  const pedacos = []; let lido = 0;
+  for(;;){
+    const { done, value } = await leitor.read();
+    if(done) break;
+    pedacos.push(value); lido += value.length;
+    if(total) progresso(frac0 + (frac1-frac0) * lido/total, rotulo);
+  }
+  const buf = new Uint8Array(lido); let off = 0;
+  for(const p of pedacos){ buf.set(p, off); off += p.length; }
+  /* Os arquivos são gzip escritos pelo gerador. Se a Vercel já descomprimiu no transporte
+     (Content-Encoding), o corpo chega cru — o teste do cabeçalho mágico resolve os dois casos. */
+  if(buf[0] === 0x1f && buf[1] === 0x8b){
+    if(typeof DecompressionStream === 'undefined')
+      throw new Error('Este navegador não tem DecompressionStream — use Chrome, Edge ou Firefox recentes.');
+    const st = new Blob([buf]).stream().pipeThrough(new DecompressionStream('gzip'));
+    return new Uint8Array(await new Response(st).arrayBuffer());
+  }
+  return buf;
+}
+function progresso(f, texto){
+  const b = document.getElementById('cargaBarra'), t = document.getElementById('cargaTexto');
+  if(b) b.style.width = Math.round(Math.max(0, Math.min(1, f))*100) + '%';
+  if(t && texto) t.textContent = texto;
+}
+
+/* Fatia o binário na ordem gravada por gerar_site.py. Usa slice (cópia) de propósito:
+   um Float32Array sobre offset não múltiplo de 4 lança RangeError. */
+function lerColunas(u8){
+  const b = u8.buffer; let o = u8.byteOffset;
+  const pega = (T, n) => { const a = new T(b.slice(o, o + n*T.BYTES_PER_ELEMENT)); o += n*T.BYTES_PER_ELEMENT; return a; };
+  N = META.n;
+  PX  = pega(Float32Array, N); PY   = pega(Float32Array, N);
+  PCI = pega(Int16Array,   N); PUF  = pega(Int8Array, N);
+  PSEG= pega(Int8Array,    N); PTV  = pega(Int8Array, N);
+  PLOC= pega(Int8Array,    N); PAL  = pega(Int8Array, N);
+  PDIA= pega(Uint8Array,   N); PENG = pega(Float32Array, N);
+  PEP = pega(Uint8Array,   N); PVEI = pega(Uint16Array, N);
+  SIMT= pega(Float32Array, NT*NT);
+  SIMC= pega(Float32Array, NC*NC);
+}
+
+/* ============================ estado ============================ */
+const S = {
+  aba: 'posts',
+  temas: [], estados: [], suportes: [], perfis: [],
+  soCapitais: false, engP: 0, d0: 0, d1: 0,
+  semParaiba: true, semNaoClass: true,
+  busca: '', pintura: 'tema', destaque: 'nenhum',
+  sel: null, ultimo: null, selCl: null, selNo: null,
+  temasRede: [], simMin: .55, modoRede: 'temas',
+  esq: true, hist: [], arraste: null,
+  z: 1, cx: .5, cy: .5, pan: false
+};
+const DESTAQUES = { ambiente:'Meio ambiente e natureza', violencia:'Violência e criminalidade',
+                    eleitoral:'Processo eleitoral' };
+let iDestaque = -1;
+
+/* ============================ filtro e facetas ============================ */
+let MASK = null;                 // 1 = passa em tudo
+let EM_TELA = 0;
+const CT = { tema:null, estado:null, suporte:null, perfil:null, eng:null, periodo:null };
+let BUSCA_HIT = null;            // Set de índices, ou null
+
+const PRESETS = () => [['Todo o período',0,DIAS], ['16–31 ago',0,16], ['1–30 set',16,46],
+  ['1–30 out',46,DIAS], ['Semana do 1º turno',T1-3,T1+4], ['Entre turnos',T1+1,T2+1]];
+
+/* Uma passada só sobre as 78 mil publicações calcula a máscara e os 6 grupos de contadores
+   facetados. Contar cada opção separadamente seriam 35 varreduras por render. */
+function recalcular(){
+  const nEng = 3, nPer = 6, presets = PRESETS();
+  CT.tema    = new Int32Array(NT + 1);          // última posição = não classificadas
+  CT.estado  = new Int32Array(META.ufs.length);
+  CT.suporte = new Int32Array(META.segmentos.length);
+  CT.perfil  = new Int32Array(META.tipos.length);
+  CT.eng     = new Int32Array(nEng);
+  CT.periodo = new Int32Array(nPer);
+  if(!MASK || MASK.length !== N) MASK = new Uint8Array(N);
+  const engCorte = Math.round(S.engP*100);
+  const faixas = [0, 50, 90];
+  let vis = 0;
+  for(let i = 0; i < N; i++){
+    MASK[i] = 0;
+    // exclusões de base: não entram na faceta, elas definem a base
+    if(S.semParaiba && !PAL[i]) continue;
+    const t = PT[i];
+    if(S.semNaoClass && t < 0) continue;
+    if(S.soCapitais && PLOC[i] === 1) continue;
+    if(BUSCA_HIT && !BUSCA_HIT.has(i)) continue;
+    // grupos facetados
+    const gT = t < 0 ? true : S.temas[t];
+    const uf = PUF[i];
+    const gE = uf < 0 || uf >= META.ufs.length || uf >= S.estados.length ? true : S.estados[uf];
+    const gS = S.suportes[PSEG[i]];
+    const gP = S.perfis[PTV[i]];
+    const gG = PEP[i] >= engCorte;
+    const d  = PDIA[i];
+    const gD = d >= S.d0 && d < S.d1;
+    let falhas = 0, qual = 0;
+    if(!gT){ falhas++; qual = 1; }
+    if(!gE){ falhas++; qual = 2; }
+    if(!gS){ falhas++; qual = 3; }
+    if(!gP){ falhas++; qual = 4; }
+    if(!gG){ falhas++; qual = 5; }
+    if(!gD){ falhas++; qual = 6; }
+    if(falhas > 1) continue;
+    if(falhas === 0 || qual === 1) CT.tema[t < 0 ? NT : t]++;
+    if(falhas === 0 || qual === 2){ if(uf >= 0 && uf < CT.estado.length) CT.estado[uf]++; }
+    if(falhas === 0 || qual === 3) CT.suporte[PSEG[i]]++;
+    if(falhas === 0 || qual === 4) CT.perfil[PTV[i]]++;
+    if(falhas === 0 || qual === 5) for(let k = 0; k < nEng; k++){ if(PEP[i] >= faixas[k]) CT.eng[k]++; }
+    if(falhas === 0 || qual === 6)
+      for(let k = 0; k < nPer; k++){ if(d >= presets[k][1] && d < presets[k][2]) CT.periodo[k]++; }
+    if(falhas === 0){ MASK[i] = 1; vis++; }
+  }
+  EM_TELA = vis;
+}
+function baseAtual(){                 // denominador honesto do "de N em tela"
+  return S.semParaiba ? META.corpus.analitico : (META.corpus.analitico + META.corpus.paraiba);
+}
+
+/* ============================ histórico ============================ */
+function registrar(texto, mudar){
+  const antes = EM_TELA;
+  mudar();
+  recalcular();
+  const d = EM_TELA - antes;
+  S.hist.unshift({
+    n: S.hist.length ? S.hist[0].n + 1 : 1, texto,
+    delta: d === 0 ? 'sem efeito' : (d > 0 ? '+' + fmt(d) + ' entraram' : fmt(Math.abs(d)) + ' saíram'),
+    total: fmt(EM_TELA),
+    cor: d === 0 ? '#6b7169' : (d > 0 ? '#25634a' : '#8f2f27')
+  });
+  S.hist = S.hist.slice(0, 8);
+  S.sel = null;
+  render();
+}
+function padrao(){
+  S.temas = META.temas.map(() => true);
+  S.estados = META.ufs.map(() => true);
+  S.suportes = META.segmentos.map(() => true);
+  S.perfis = META.tipos.map(() => true);
+  S.soCapitais = false; S.engP = 0; S.d0 = 0; S.d1 = DIAS;
+  S.semParaiba = true; S.semNaoClass = true; S.busca = ''; BUSCA_HIT = null;
+  S.sel = null; S.selCl = null;
+}
+function noPadrao(){
+  return S.semParaiba && S.semNaoClass && S.temas.every(Boolean) && S.estados.every(Boolean)
+      && S.suportes.every(Boolean) && S.perfis.every(Boolean) && !S.soCapitais && S.engP === 0
+      && S.d0 === 0 && S.d1 === DIAS && !S.busca.trim();
+}
+
+/* ============================ datas ============================ */
+const MES = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+function dataDoDia(d){
+  const x = new Date(META.dia0 + 'T12:00:00');
+  x.setDate(x.getDate() + Math.max(0, Math.min(DIAS-1, d)));
+  return x.getDate() + ' ' + MES[x.getMonth()];
+}
+function dataCompleta(d){
+  const x = new Date(META.dia0 + 'T12:00:00');
+  x.setDate(x.getDate() + d);
+  return x.toLocaleDateString('pt-BR');
+}
+
+/* ============================ desenho ============================ */
+const cvMapa = document.getElementById('mapa');
+const cvLinha = document.getElementById('linha');
+let HITS = [];               // [id, x, y, raio] em px CSS, para clusters e rede
+
+function prepara(cv){
+  if(!cv) return null;
+  const dpr = window.devicePixelRatio || 1;
+  const w = cv.clientWidth, h = cv.clientHeight;
+  if(!w || !h) return null;
+  cv.width = Math.round(w*dpr); cv.height = Math.round(h*dpr);
+  const ctx = cv.getContext('2d');
+  ctx.imageSmoothingEnabled = false;
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  return { ctx, w: cv.width, h: cv.height, dpr };
+}
+const telaX = (dx, w) => Math.round((0.5 + (dx - S.cx)*S.z)*w);
+const telaY = (dy, h) => Math.round((0.5 + (dy - S.cy)*S.z)*h);
+
+function corDe(i){
+  const t = PT[i];
+  if(t < 0) return CINZA_NC;
+  if(S.pintura === 'estado'){
+    const uf = PUF[i];
+    if(uf < 0) return '#6b7169';
+    return uf < META.corUF.length ? META.corUF[uf] : COR_PB;   // PB e afins em vermelho
+  }
+  return META.temas[t].cor;
+}
+const esmaecido = i => iDestaque >= 0 && PT[i] !== iDestaque;
+
+function pintarMapa(){
+  const c = prepara(cvMapa); if(!c) return;
+  const { ctx, w, h, dpr } = c;
+  ctx.fillStyle = '#0f1512'; ctx.fillRect(0, 0, w, h);
+  const passo = S.z >= 4 ? 24 : (S.z >= 2 ? 12 : 6);
+  ctx.strokeStyle = '#1c2620'; ctx.lineWidth = 1;
+  for(let i = 0; i <= passo; i++){
+    const d = i/passo;
+    const x = telaX(d, w) + .5, y = telaY(d, h) + .5;
+    if(x > 0 && x < w){ ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+    if(y > 0 && y < h){ ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+  }
+  ctx.strokeStyle = '#2c3a33'; ctx.lineWidth = Math.max(1, Math.round(dpr));
+  ctx.strokeRect(telaX(0, w) + .5, telaY(0, h) + .5, Math.round(S.z*w), Math.round(S.z*h));
+  if(S.aba === 'rede'){ pintarRede(ctx, w, h, dpr); return; }
+  if(S.aba === 'clusters'){ pintarClusters(ctx, w, h, dpr); return; }
+  pintarPosts(ctx, w, h, dpr);
+}
+
+function pintarPosts(ctx, w, h, dpr){
+  const lado = Math.max(2, Math.round(2*dpr*Math.min(2.6, Math.sqrt(S.z))));
+  // fantasmas: o que está na base mas fora do recorte, para o filtro ter relevo
+  ctx.fillStyle = '#232e28';
+  for(let i = 0; i < N; i++){
+    if(MASK[i]) continue;
+    if(S.semParaiba && !PAL[i]) continue;
+    if(S.semNaoClass && PT[i] < 0) continue;
+    ctx.fillRect(telaX(PX[i], w), telaY(PY[i], h), lado, lado);
+  }
+  for(let i = 0; i < N; i++){
+    if(!MASK[i]) continue;
+    ctx.globalAlpha = esmaecido(i) ? .18 : .95;
+    ctx.fillStyle = corDe(i);
+    ctx.fillRect(telaX(PX[i], w), telaY(PY[i], h), lado, lado);
+  }
+  ctx.globalAlpha = 1;
+  if(S.sel != null){
+    const x = telaX(PX[S.sel], w), y = telaY(PY[S.sel], h);
+    const viz = vizinhos(S.sel);
+    ctx.strokeStyle = '#f2f7f3'; ctx.lineWidth = Math.max(1, dpr);
+    ctx.globalAlpha = .55; ctx.setLineDash([Math.round(3*dpr), Math.round(3*dpr)]);
+    for(const j of viz){
+      ctx.beginPath();
+      ctx.moveTo(x + lado/2, y + lado/2);
+      ctx.lineTo(telaX(PX[j], w) + lado/2, telaY(PY[j], h) + lado/2);
+      ctx.stroke();
+    }
+    ctx.setLineDash([]); ctx.globalAlpha = 1;
+    for(const j of viz){
+      ctx.beginPath();
+      ctx.arc(telaX(PX[j], w) + lado/2, telaY(PY[j], h) + lado/2, 5*dpr, 0, Math.PI*2);
+      ctx.stroke();
+    }
+    ctx.lineWidth = Math.max(1, 1.6*dpr);
+    ctx.beginPath(); ctx.arc(x + lado/2, y + lado/2, 9*dpr, 0, Math.PI*2); ctx.stroke();
+  }
+}
+
+function volumeClusters(){
+  const v = new Int32Array(NC);
+  for(let i = 0; i < N; i++) if(MASK[i] && PCI[i] >= 0) v[PCI[i]]++;
+  return v;
+}
+function pintarClusters(ctx, w, h, dpr){
+  const vol = volumeClusters();
+  HITS = [];
+  const guardados = [];
+  for(let k = 0; k < NC; k++){
+    const n = vol[k]; if(!n) continue;
+    const g = META.clusters[k];
+    const cx = telaX(g.x, w), cy = telaY(g.y, h);
+    /* Denominador ABSOLUTO: o maior cluster da base inteira. Recalcular o máximo sobre os
+       pontos filtrados faria as bolhas nunca encolherem, só se reembaralharem. */
+    const r = (4 + 34*Math.sqrt(n/CL_MAX))*dpr*Math.min(2.2, Math.sqrt(S.z));
+    HITS.push([k, cx/dpr, cy/dpr, r/dpr]);
+    const dim = iDestaque >= 0 && g.t !== iDestaque;
+    ctx.globalAlpha = dim ? .12 : .5;
+    ctx.fillStyle = META.temas[g.t].cor;
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.fill();
+    ctx.globalAlpha = dim ? .3 : 1;
+    ctx.strokeStyle = META.temas[g.t].cor; ctx.lineWidth = Math.max(1, dpr);
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
+    if(k === S.selCl){
+      ctx.strokeStyle = '#f2f7f3'; ctx.lineWidth = Math.max(1, 1.8*dpr);
+      ctx.beginPath(); ctx.arc(cx, cy, r + 4*dpr, 0, Math.PI*2); ctx.stroke();
+    }
+    guardados.push({ k, g, cx, cy, r, n });
+  }
+  ctx.globalAlpha = 1;
+  if(S.z < 1.8) return;
+  const ocupado = [];
+  const livre = (x0,y0,x1,y1) => {
+    for(const q of ocupado) if(x0 < q[2] && x1 > q[0] && y0 < q[3] && y1 > q[1]) return false;
+    return true;
+  };
+  ctx.textAlign = 'center';
+  for(const it of guardados.sort((a,b) => b.n - a.n)){
+    const { cx, cy, r, g, k, n } = it;
+    if(cx < -80*dpr || cx > w + 80*dpr || cy < 0 || cy > h) continue;
+    if(r < 13*dpr && k !== S.selCl) continue;
+    ctx.font = '700 ' + Math.round(10.5*dpr) + 'px "Archivo Narrow", Archivo, sans-serif';
+    const cap = g.nome || ('C' + g.id);
+    const lc = ctx.measureText(cap).width/2 + 4*dpr, hc = 7.5*dpr;
+    const yn = cy + r + 4*dpr;
+    if(!livre(cx-lc, yn, cx+lc, yn + hc*2)) continue;
+    ocupado.push([cx-lc, yn, cx+lc, yn + hc*2]);
+    ctx.textBaseline = 'top';
+    ctx.fillStyle = 'rgba(15,21,18,.86)'; ctx.fillRect(cx-lc, yn, lc*2, hc*2);
+    ctx.fillStyle = '#f2f7f3'; ctx.fillText(cap, cx, yn + 2*dpr);
+    if(r >= 15*dpr){
+      ctx.font = '700 ' + Math.round(9.5*dpr) + 'px "Archivo Narrow", Archivo, sans-serif';
+      ctx.textBaseline = 'middle'; ctx.fillStyle = '#0f1512';
+      ctx.fillText('C' + g.id, cx, cy);
+    }
+    if(S.z < 3) continue;
+    ctx.font = '600 ' + Math.round(9.5*dpr) + 'px "Archivo Narrow", Archivo, sans-serif';
+    const sub = META.temas[g.t].nome + ' · ' + fmt(n);
+    const ls = ctx.measureText(sub).width/2 + 3*dpr;
+    const y0 = yn + hc*2 + 2*dpr, y1 = y0 + 12*dpr;
+    if(!livre(cx-ls, y0, cx+ls, y1)) continue;
+    ocupado.push([cx-ls, y0, cx+ls, y1]);
+    ctx.textBaseline = 'top'; ctx.fillStyle = '#9aa298';
+    ctx.fillText(sub, cx, y0);
+  }
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+}
+
+/* ---------- rede ---------- */
+const ehClRede = () => S.modoRede === 'clusters';
+function nosRede(){
+  if(ehClRede())
+    return META.clusters.map((g,k) => ({ id:k, cod:'C'+g.id, nome:g.nome, cor:META.temas[g.t].cor,
+                                         vol:g.n, t:g.t }))
+      .filter(n => S.temasRede[n.t]).sort((a,b) => b.vol - a.vol);
+  return META.temas.map((t,i) => ({ id:i, cod:String(i+1), nome:t.nome, cor:t.cor, vol:t.n, t:i }))
+    .filter(n => S.temasRede[n.t]);
+}
+const simDe = (a,b) => ehClRede() ? SIMC[a.id*NC + b.id] : SIMT[a.id*NT + b.id];
+function arestasRede(nos){
+  const out = [];
+  if(ehClRede()){
+    const vistas = new Set();
+    for(const na of nos){
+      /* no máximo as quatro ligações mais fortes por nó: sem isso são 1.573 arestas
+         contra 298, e o desenho vira um emaranhado ilegível */
+      const viz = nos.filter(n => n.id !== na.id).map(n => [n, simDe(na, n)])
+        .filter(p => p[1] >= S.simMin).sort((x,y) => y[1] - x[1]).slice(0, 4);
+      for(const [nb, v] of viz){
+        const ch = na.id < nb.id ? na.id + ':' + nb.id : nb.id + ':' + na.id;
+        if(vistas.has(ch)) continue;
+        vistas.add(ch); out.push([na, nb, v]);
+      }
+    }
+  } else {
+    for(let a = 0; a < nos.length; a++) for(let b = a+1; b < nos.length; b++){
+      const v = simDe(nos[a], nos[b]);
+      if(v >= S.simMin) out.push([nos[a], nos[b], v]);
+    }
+  }
+  return out;
+}
+function pintarRede(ctx, w, h, dpr){
+  const cl = ehClRede();
+  const nos = nosRede();
+  const pos = cl ? META.netC : META.netT;
+  const volMax = Math.max(1, ...nos.map(n => n.vol));
+  const P = {}, R = {};
+  const escZ = Math.min(2.2, Math.sqrt(S.z));
+  /* O layout vem em [0,1] com proporção 1:1. Esticá-lo para a largura do canvas distorceria
+     a geometria da similaridade — então ele entra num quadrado centrado, com folga para os
+     rótulos e para os nós das bordas não saírem pela tela. */
+  const lado = Math.min(w, h)*0.80;
+  const quadX = p => 0.5 + (p - 0.5)*(lado/w);
+  const quadY = p => 0.5 + (p - 0.5)*(lado/h);
+  for(const n of nos){
+    const p = pos[n.id] || [.5,.5];
+    P[n.id] = [telaX(quadX(p[0]), w), telaY(quadY(p[1]), h)];
+    R[n.id] = ((cl ? 2.5 : 9) + (cl ? 5.5 : 26)*Math.sqrt(n.vol/volMax))*dpr*escZ;
+  }
+  const arestas = arestasRede(nos);
+  const nSel = S.selNo;
+  const noAtual = nSel != null ? nos.find(n => n.id === nSel) : null;
+  ctx.lineCap = 'round';
+  for(const [na, nb, v] of arestas){
+    const ligada = nSel === na.id || nSel === nb.id;
+    ctx.globalAlpha = nSel == null ? Math.min(cl ? .3 : .55, v) : (ligada ? Math.min(.95, v + .35) : .05);
+    ctx.strokeStyle = ligada ? '#7fc49a' : '#5e7a6c';
+    ctx.lineWidth = Math.max(1, (v - S.simMin + .12)*(cl ? 3.5 : 11)*dpr);
+    ctx.beginPath(); ctx.moveTo(P[na.id][0], P[na.id][1]); ctx.lineTo(P[nb.id][0], P[nb.id][1]); ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  HITS = [];
+  for(const n of nos){
+    const p = P[n.id], r = R[n.id];
+    HITS.push([n.id, p[0]/dpr, p[1]/dpr, Math.max(r/dpr, cl ? 5 : 11)]);
+    ctx.globalAlpha = nSel == null || nSel === n.id ||
+      (noAtual && simDe(n, noAtual) >= S.simMin) ? 1 : .22;
+    ctx.fillStyle = n.cor;
+    ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, Math.PI*2); ctx.fill();
+    if(nSel === n.id){
+      ctx.strokeStyle = '#f2f7f3'; ctx.lineWidth = Math.max(1, 2*dpr);
+      ctx.beginPath(); ctx.arc(p[0], p[1], r + 5*dpr, 0, Math.PI*2); ctx.stroke();
+    }
+    ctx.fillStyle = '#0f1512';
+    if(cl){
+      if(r >= 7.5*dpr){
+        ctx.font = '700 ' + Math.round(7.5*dpr) + 'px "Archivo Narrow", Archivo, sans-serif';
+        ctx.fillText(String(META.clusters[n.id].id), p[0], p[1] + dpr*.5);
+      }
+    } else {
+      ctx.font = '700 ' + Math.round(11*dpr) + 'px "Archivo Narrow", Archivo, sans-serif';
+      ctx.fillText(n.cod, p[0], p[1] + dpr);
+    }
+    ctx.globalAlpha = 1;
+  }
+  /* Rótulos numa passada separada, ancorados PELO LADO: centrado radialmente a caixa
+     cresce para os dois lados e varre os vizinhos. */
+  const ocup = nos.map(n => { const p = P[n.id], r = R[n.id]; return [p[0]-r, p[1]-r, p[0]+r, p[1]+r]; });
+  ocup.push([0, h - 44*dpr, w, h]);
+  const livre = (x0,y0,x1,y1) => {
+    if(x0 < 2 || x1 > w-2 || y0 < 2 || y1 > h-2) return false;
+    for(const q of ocup) if(x0 < q[2] && x1 > q[0] && y0 < q[3] && y1 > q[1]) return false;
+    return true;
+  };
+  ctx.font = '600 ' + Math.round(cl ? 10*dpr : 11*dpr) + 'px "Archivo Narrow", Archivo, sans-serif';
+  const alt = (cl ? 6.5 : 7.5)*dpr, pad = 4*dpr, cxm = w/2, cym = h/2;
+  const ordem = nos.slice().sort((a,b) => (nSel === a.id ? -1 : nSel === b.id ? 1 : b.vol - a.vol));
+  for(const n of ordem){
+    const p = P[n.id], r = R[n.id];
+    const larg = ctx.measureText(n.nome).width + pad*2;
+    const dir = p[0] >= cxm - 4, acima = p[1] < cym;
+    const cand = [];
+    for(const g of [7,16,27]) cand.push([dir ? p[0]+r+g*dpr : p[0]-r-g*dpr-larg, p[1]-alt]);
+    for(const g of [9,20,32]) cand.push([Math.min(w-larg-3, Math.max(3, p[0]-larg/2)),
+                                         acima ? p[1]-r-g*dpr-alt*2 : p[1]+r+g*dpr]);
+    let bx = null, by = null;
+    for(const [x,y] of cand) if(livre(x, y, x+larg, y+alt*2)){ bx = x; by = y; break; }
+    if(bx == null){
+      if(nSel !== n.id) continue;
+      bx = Math.min(w-larg-3, Math.max(3, p[0]-larg/2));
+      by = Math.max(3, p[1]-r-16*dpr);
+    }
+    ocup.push([bx, by, bx+larg, by+alt*2]);
+    ctx.fillStyle = 'rgba(15,21,18,.86)'; ctx.fillRect(bx, by, larg, alt*2);
+    ctx.textAlign = 'left';
+    ctx.fillStyle = nSel === n.id ? '#f2f7f3' : '#c9cec5';
+    ctx.fillText(n.nome, bx + pad, by + alt + dpr);
+  }
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+}
+
+/* ---------- linha do tempo ---------- */
+function pintarLinha(){
+  const c = prepara(cvLinha); if(!c) return;
+  const { ctx, w, h, dpr } = c;
+  ctx.fillStyle = '#0f1512'; ctx.fillRect(0, 0, w, h);
+  const eixo = Math.round(13*dpr), topo = Math.round(14*dpr);
+  const alt = h - eixo, disp = alt - topo;
+  const todos = new Int32Array(DIAS), dentro = new Int32Array(DIAS);
+  for(let i = 0; i < N; i++){
+    if(S.semParaiba && !PAL[i]) continue;
+    if(S.semNaoClass && PT[i] < 0) continue;
+    todos[PDIA[i]]++;
+    if(MASK[i]) dentro[PDIA[i]]++;
+  }
+  let max = 1; for(let d = 0; d < DIAS; d++) if(todos[d] > max) max = todos[d];
+  const bw = w/DIAS, a = S.arraste;
+  const j0 = a ? Math.min(a.a, a.b) : S.d0, j1 = a ? Math.max(a.a, a.b) + 1 : S.d1;
+  ctx.fillStyle = 'rgba(90,159,212,.10)';
+  ctx.fillRect(Math.round(T1*bw), topo, Math.round((T2-T1+1)*bw), alt-topo);
+  ctx.fillStyle = 'rgba(79,157,74,.09)';
+  ctx.fillRect(Math.round(j0*bw), topo, Math.round((j1-j0)*bw), alt-topo);
+  for(let d = 0; d < DIAS; d++){
+    const x = Math.round(d*bw), lw = Math.max(1, Math.round(bw) - Math.max(1, Math.round(dpr)));
+    const dj = d >= j0 && d < j1;
+    ctx.fillStyle = dj ? '#2a3a31' : '#1c2620';
+    const ht = Math.round(todos[d]/max*(disp-2)); ctx.fillRect(x, alt-ht, lw, ht);
+    ctx.fillStyle = dj ? '#4f9d4a' : '#2f4a39';
+    const hd = Math.round(dentro[d]/max*(disp-2)); ctx.fillRect(x, alt-hd, lw, hd);
+  }
+  ctx.strokeStyle = '#7fc49a'; ctx.lineWidth = Math.max(1, Math.round(dpr));
+  [[j0,0],[j1,-1]].forEach(([d,off]) => {
+    const x = Math.round(d*bw) + off*ctx.lineWidth + .5;
+    ctx.beginPath(); ctx.moveTo(x, topo); ctx.lineTo(x, alt); ctx.stroke();
+  });
+  ctx.font = '700 ' + Math.round(9.5*dpr) + 'px "Archivo Narrow", Archivo, sans-serif';
+  ctx.textBaseline = 'top';
+  ctx.strokeStyle = '#5a9fd4'; ctx.lineWidth = Math.max(1, Math.round(dpr));
+  const xa = Math.round(T1*bw + bw/2), xb = Math.round(T2*bw + bw/2), yb = topo - Math.round(4*dpr) + .5;
+  ctx.beginPath(); ctx.moveTo(xa, yb); ctx.lineTo(xb, yb); ctx.stroke();
+  ctx.fillStyle = '#7ab4dd'; ctx.textAlign = 'center';
+  ctx.fillText('entre turnos', Math.round((xa+xb)/2), 0);
+  [[T1,'1º turno'],[T2,'2º turno']].forEach(([d, rot]) => {
+    const x = Math.round(d*bw + bw/2);
+    ctx.strokeStyle = '#d14a3c'; ctx.lineWidth = Math.max(1, Math.round(1.6*dpr));
+    ctx.beginPath(); ctx.moveTo(x+.5, topo - Math.round(7*dpr)); ctx.lineTo(x+.5, alt); ctx.stroke();
+    ctx.fillStyle = '#e2705f';
+    const dir = d > DIAS*.78;
+    ctx.textAlign = dir ? 'right' : 'left';
+    ctx.fillText(rot, x + (dir ? -5*dpr : 5*dpr), 0);
+  });
+  ctx.strokeStyle = '#2c3a33'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, alt-.5); ctx.lineTo(w, alt-.5); ctx.stroke();
+  ctx.fillStyle = '#5f6b62';
+  ctx.font = '600 ' + Math.round(9.5*dpr) + 'px "Archivo Narrow", Archivo, sans-serif';
+  [[0,'left'],[16,'center'],[46,'center'],[DIAS-1,'right']].forEach(([d, al]) => {
+    ctx.textAlign = al;
+    ctx.fillText(dataDoDia(d), Math.min(w-2, Math.max(2, d*bw + bw/2)), alt + 2*dpr);
+  });
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+}
+
+/* ============================ vizinhos e seleção ============================ */
+function vizinhos(i){
+  if(!NB) return [];
+  const out = [];
+  for(let k = 0; k < 5; k++){
+    const j = NB[i*5 + k];
+    if(j >= 0) out.push(j);
+  }
+  return out;
+}
+/* ============================ painel esquerdo ============================ */
+function linhaRecorte(texto){
+  return { texto, marca:'#7fc49a', botao:null };
+}
+function blocosRecorte(){
+  const c = META.corpus;
+  const r = [
+    { texto: S.semParaiba ? 'Só Amazônia Legal — ' + fmt(c.paraiba) + ' da Paraíba fora'
+                          : 'Paraíba incluída — ' + fmt(c.paraiba) + ' publicações fora da Amazônia Legal',
+      marca: S.semParaiba ? '#7fc49a' : '#e2705f',
+      botao: { acao:'pb', rot: S.semParaiba ? 'padrão' : 'reativar',
+               cor: S.semParaiba ? '#7fc49a' : '#e2705f',
+               borda: S.semParaiba ? '#3f5a4c' : '#6d3b34', dica:'padraoPb' } },
+    { texto: S.semNaoClass ? 'Sem as ' + fmt(c.naoClass) + ' não classificadas pelo modelo'
+                           : fmt(c.naoClass) + ' não classificadas no mapa, em cinza',
+      marca: S.semNaoClass ? '#7fc49a' : '#e2705f',
+      botao: { acao:'nc', rot: S.semNaoClass ? 'padrão' : 'reativar',
+               cor: S.semNaoClass ? '#7fc49a' : '#e2705f',
+               borda: S.semNaoClass ? '#3f5a4c' : '#6d3b34', dica:'padraoNc' } }
+  ];
+  if(!S.temas.every(Boolean)) r.push(linhaRecorte(S.temas.filter(Boolean).length + ' de ' + NT + ' macro-temas'));
+  if(!S.estados.every(Boolean)) r.push(linhaRecorte(S.estados.filter(Boolean).length + ' de ' + META.ufs.length + ' estados'));
+  if(!S.suportes.every(Boolean)) r.push(linhaRecorte('Suporte: ' + META.segmentos.filter((x,i)=>S.suportes[i]).join(', ')));
+  if(!S.perfis.every(Boolean)) r.push(linhaRecorte('Perfil: ' + META.tipos.filter((x,i)=>S.perfis[i]).join(', ')));
+  if(S.soCapitais) r.push(linhaRecorte('Só capitais — ' + fmt(META.corpus.interior) + ' publicações de sede interiorana fora'));
+  if(S.engP > 0) r.push(linhaRecorte('Acima do percentil ' + Math.round(S.engP*100) + ' de engajamento'));
+  if(S.d0 > 0 || S.d1 < DIAS) r.push(linhaRecorte('Período: ' + dataDoDia(S.d0) + ' a ' + dataDoDia(S.d1-1)));
+  if(S.busca.trim()) r.push(linhaRecorte('Busca: "' + S.busca.trim() + '"'));
+  if(noPadrao()) r.push(linhaRecorte('Nenhum filtro adicional ativo'));
+  return r;
+}
+
+function htmlEsq(){
+  const c = META.corpus;
+  const larg = Math.max(1, Math.round(EM_TELA/baseAtual()*100)) + '%';
+  let h = `
+  <div class="bloco escuro" style="gap:11px">
+    <div class="cab">
+      <span class="rot v" data-dica="recorte">Recorte em vigor</span>
+      <button type="button" class="lnk v" data-ac="fecharEsq">Fechar</button>
+    </div>
+    <div style="display:flex;align-items:baseline;gap:7px;flex-wrap:wrap">
+      <span class="nar" style="font-size:34px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums">${fmt(EM_TELA)}</span>
+      <span class="nar" style="font-size:12px;color:#9aa298">de ${fmt(baseAtual())} publicações</span>
+    </div>
+    <div class="barra"><i style="width:${larg}"></i></div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      ${blocosRecorte().map(r => `
+        <div style="display:grid;grid-template-columns:8px minmax(0,1fr);gap:6px;align-items:start;font-size:11.5px;line-height:1.4;color:#c9cec5">
+          <span style="color:${r.marca}">·</span>
+          <span style="display:flex;flex-wrap:wrap;gap:5px;align-items:center">
+            <span>${esc(r.texto)}</span>
+            ${r.botao ? `<button type="button" class="selo nar" data-ac="${r.botao.acao}" data-dica="${r.botao.dica}" style="color:${r.botao.cor};border-color:${r.botao.borda}">${r.botao.rot}</button>` : ''}
+          </span>
+        </div>`).join('')}
+    </div>
+    ${noPadrao() ? '' : `<button type="button" class="btnp" data-ac="voltarPadrao" data-dica="padrao" style="font-size:11px;padding:9px">↺ Voltar ao recorte padrão</button>`}
+  </div>
+
+  <div class="bloco" style="gap:9px">
+    <div class="cab">
+      <span class="rot" data-dica="historico">Histórico de alterações</span>
+      <button type="button" class="lnk" data-ac="reiniciar">Reiniciar</button>
+    </div>
+    ${S.hist.length ? '' : '<span class="nota">Nenhuma alteração ainda. Cada mudança de filtro entra aqui numerada, com quantas publicações entraram ou saíram.</span>'}
+    <div style="display:flex;flex-direction:column;gap:1px">
+      ${S.hist.map(x => `
+        <div style="display:grid;grid-template-columns:20px minmax(0,1fr) auto;gap:8px;align-items:baseline;background:#f0efe7;border:1px solid #d5d3c6;padding:6px 8px;font-size:11.5px">
+          <span class="nar" style="font-weight:700;color:#8c877c;font-variant-numeric:tabular-nums">${x.n}</span>
+          <span style="line-height:1.35">${esc(x.texto)}</span>
+          <span style="display:flex;flex-direction:column;align-items:flex-end;font-variant-numeric:tabular-nums;white-space:nowrap">
+            <span style="font-weight:600;color:${x.cor}">${x.delta}</span>
+            <span style="font-size:10.5px;color:#6b7169">→ ${x.total}</span>
+          </span>
+        </div>`).join('')}
+    </div>
+  </div>`;
+
+  h += S.aba === 'rede' ? htmlRede() : htmlFiltros();
+  return h;
+}
+
+function htmlRede(){
+  const cl = ehClRede();
+  const nos = nosRede();
+  const arestas = arestasRede(nos).length;
+  const grau = id => {
+    const alvo = nos.find(n => n.id === id); if(!alvo) return 0;
+    return nos.reduce((a,n) => a + (n.id !== id && simDe(alvo, n) >= S.simMin ? 1 : 0), 0);
+  };
+  const grauTema = i => META.temas.reduce((a,t,j) =>
+    a + (j !== i && S.temasRede[j] && SIMT[i*NT+j] >= S.simMin ? 1 : 0), 0);
+  const todos = S.temasRede.every(Boolean);
+  return `
+  <div style="display:flex;flex-direction:column">
+    <div class="bloco" style="background:#dfddd2;gap:8px">
+      <span class="nar" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#4a5148;font-weight:700">Os filtros de recorte desapareceram</span>
+      <span style="font-size:11.5px;line-height:1.5;color:#3b423a;text-wrap:pretty">A rede é calculada uma única vez sobre a base inteira: ela não responde a estado, suporte, engajamento ou período. Em vez de deixar controles inertes na tela, eles saem daqui. O que dá para mexer é o desenho da rede: quais macro-temas entram e a partir de que similaridade uma ligação é desenhada.</span>
+    </div>
+    <div class="bloco" style="border-bottom:0">
+      <span class="rot" data-dica="modoRede">Granularidade</span>
+      <div style="display:flex;gap:2px;background:#d5d3c6;padding:2px;border-radius:2px">
+        <button type="button" class="tab ${cl?'':'on'}" data-ac="redeTemas" style="flex:1;background:${cl?'transparent':'#1c4d38'};color:${cl?'#6b7169':'#f2f7f3'};padding:7px 6px;font-size:11.5px">${NT} macro-temas</button>
+        <button type="button" class="tab ${cl?'on':''}" data-ac="redeClusters" style="flex:1;background:${cl?'#1c4d38':'transparent'};color:${cl?'#f2f7f3':'#6b7169'};padding:7px 6px;font-size:11.5px">${NC} clusters</button>
+      </div>
+      <span class="rot" data-dica="simMin">Similaridade mínima</span>
+      <div class="caixa">
+        <div class="cab">
+          <span class="sub" style="cursor:default">Limiar da aresta</span>
+          <span class="nar" style="font-size:13px;font-weight:700;color:#1c4d38;font-variant-numeric:tabular-nums">≥ ${S.simMin.toFixed(2).replace('.',',')}</span>
+        </div>
+        <input type="range" min="20" max="90" step="1" value="${Math.round(S.simMin*100)}" data-ac="simMin" style="width:100%;margin:0">
+        <span class="nota">${arestas === 0
+          ? 'Nenhuma ligação sobrevive a este limiar: a rede fica só com os nós.'
+          : arestas + (arestas === 1 ? ' ligação desenhada' : ' ligações desenhadas') + ' entre os nós visíveis.' +
+            (cl ? ' Em modo cluster, cada nó desenha no máximo as quatro ligações mais fortes — sem isso o desenho vira um emaranhado.' : '')}</span>
+      </div>
+      <div class="cab" style="margin-top:2px">
+        <span class="sub" data-dica="no">Nós na rede</span>
+        <button type="button" class="lnk" data-ac="todosRede">${todos ? 'Desmarcar todos' : 'Marcar todos'}</button>
+      </div>
+      <div class="lista">
+        ${META.temas.map((t,i) => `
+          <label style="grid-template-columns:14px 16px 9px minmax(0,1fr) auto;gap:7px">
+            <input type="checkbox" ${S.temasRede[i]?'checked':''} data-ac="temaRede" data-i="${i}" style="width:14px;height:14px;margin:0">
+            <span class="nar" style="font-size:11px;font-weight:700;color:#4a5148;font-variant-numeric:tabular-nums;text-align:center">${i+1}</span>
+            <span class="bola" style="background:${t.cor}"></span>
+            <span class="nm">${esc(t.nome)}</span>
+            <span class="qt nar">${cl ? (S.temasRede[i] ? nos.filter(n => n.t === i).length + ' cl' : '—') : grauTema(i)}</span>
+          </label>`).join('')}
+      </div>
+      <span class="nota">${cl
+        ? 'O número à direita é quantos clusters daquele macro-tema estão no desenho.'
+        : 'O número à esquerda é o que aparece dentro do nó no mapa. O da direita é o grau: quantas ligações ele mantém no limiar atual.'}</span>
+      ${cl ? `
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px">
+        <span class="sub" style="cursor:default">Clusters no desenho</span>
+        <div class="lista" style="max-height:280px;overflow:hidden auto">
+          ${nos.map(n => `
+            <div data-ac="irNo" data-i="${n.id}" style="grid-template-columns:9px 30px minmax(0,1fr) auto;gap:7px;background:${S.selNo===n.id?'#dfe9e1':'#f0efe7'};padding:5px 7px;font-size:11.5px">
+              <span class="bola" style="background:${n.cor}"></span>
+              <span class="nar" style="font-weight:700;color:#4a5148;font-variant-numeric:tabular-nums">${n.cod}</span>
+              <span class="nm">${esc(n.nome)}</span>
+              <span class="qt nar">${grau(n.id)}</span>
+            </div>`).join('')}
+        </div>
+      </div>` : ''}
+    </div>
+  </div>`;
+}
+
+function htmlFiltros(){
+  const porEstado = S.pintura === 'estado';
+  const pct = Math.round(S.engP*100);
+  const presets = PRESETS();
+  const todosTemas = S.temas.every(Boolean);
+  const faixas = [['Todas as publicações',0],['Metade mais engajada',.5],['Decil mais engajado',.9]];
+  return `
+  <div class="bloco" style="border-bottom:0">
+    <span class="rot" data-dica="mapa">O que está no mapa</span>
+
+    <input type="text" id="busca" value="${esc(S.busca)}" data-dica="busca"
+           placeholder="${TXT ? 'Buscar no texto, macro-tema ou estado' : 'Buscar macro-tema ou estado'}">
+
+    <div class="cab" style="margin-top:2px">
+      <span style="display:flex;align-items:center;gap:7px;min-width:0">
+        <span class="sub" data-dica="tema">Macro-tema</span>
+        <span class="chip" data-dica="corAtiva" style="display:${porEstado?'none':'inline-block'}">cor do mapa</span>
+      </span>
+      <button type="button" class="lnk" data-ac="todosTemas">${todosTemas ? 'Desmarcar todos' : 'Marcar todos'}</button>
+    </div>
+    <div class="lista">
+      ${META.temas.map((t,i) => `
+        <label style="grid-template-columns:14px 9px minmax(0,1fr) auto auto">
+          <input type="checkbox" ${S.temas[i]?'checked':''} data-ac="tema" data-i="${i}" style="width:14px;height:14px;margin:0">
+          <span class="bola" style="background:${porEstado?'transparent':t.cor};border:1px solid ${porEstado?'#c3c1b4':t.cor}"></span>
+          <span class="nm">${esc(t.nome)}</span>
+          <span class="qt">${fmt(CT.tema[i])}</span>
+          <button type="button" class="so" data-ac="soTema" data-i="${i}">só</button>
+        </label>`).join('')}
+      ${S.semNaoClass ? '' : `
+        <label style="grid-template-columns:14px 9px minmax(0,1fr) auto auto">
+          <input type="checkbox" checked disabled style="width:14px;height:14px;margin:0">
+          <span class="bola" style="background:${porEstado?'transparent':CINZA_NC};border:1px solid ${porEstado?'#c3c1b4':CINZA_NC}"></span>
+          <span class="nm" style="color:#6b7169">Não classificadas</span>
+          <span class="qt">${fmt(CT.tema[NT])}</span><span></span>
+        </label>`}
+    </div>
+
+    <span style="display:flex;align-items:center;gap:7px;margin-top:4px;min-width:0">
+      <span class="sub" data-dica="estado">Estado</span>
+      <span class="chip" data-dica="corAtiva" style="display:${porEstado?'inline-block':'none'}">cor do mapa</span>
+    </span>
+    <div class="lista">
+      ${META.ufs.map((u,i) => {
+        const pb = i >= META.corUF.length;
+        if(pb && S.semParaiba) return '';
+        const cor = pb ? COR_PB : META.corUF[i];
+        return `
+        <label style="grid-template-columns:14px 9px minmax(0,1fr) auto">
+          <input type="checkbox" ${S.estados[i]?'checked':''} data-ac="estado" data-i="${i}" style="width:14px;height:14px;margin:0">
+          <span class="bola" style="background:${porEstado?cor:'transparent'};border:1px solid ${porEstado?cor:'#c3c1b4'}"></span>
+          <span class="nm">${esc(u)}${pb ? ' <span style="color:#8f2f27;font-size:10.5px">fora da Amazônia Legal</span>' : ''}</span>
+          <span class="qt">${fmt(CT.estado[i])}</span>
+        </label>`; }).join('')}
+    </div>
+
+    <span class="sub" data-dica="suporte" style="margin-top:4px">Suporte do veículo</span>
+    <div class="lista">
+      ${META.segmentos.map((s,i) => `
+        <label style="grid-template-columns:14px minmax(0,1fr) auto">
+          <input type="checkbox" ${S.suportes[i]?'checked':''} data-ac="suporte" data-i="${i}" style="width:14px;height:14px;margin:0">
+          <span class="nm">${esc(s)}</span><span class="qt">${fmt(CT.suporte[i])}</span>
+        </label>`).join('')}
+    </div>
+    <div class="aviso">Televisão tem 352 publicações e rádio 1.520, sendo 85% de um único veículo. Diferenças aqui descrevem um veículo, não um suporte.</div>
+
+    <span class="sub" data-dica="perfil" style="margin-top:4px">Perfil de publicação</span>
+    <div class="lista">
+      ${META.tipos.map((s,i) => `
+        <label style="grid-template-columns:14px minmax(0,1fr) auto">
+          <input type="checkbox" ${S.perfis[i]?'checked':''} data-ac="perfil" data-i="${i}" style="width:14px;height:14px;margin:0">
+          <span class="nm">${esc(s)}</span><span class="qt">${fmt(CT.perfil[i])}</span>
+        </label>`).join('')}
+    </div>
+
+    <label class="lista" data-dica="capitais" style="display:grid;grid-template-columns:14px minmax(0,1fr) auto;gap:8px;align-items:center;background:#f0efe7;border:1px solid #d5d3c6;padding:8px;cursor:pointer;font-size:12px;margin-top:4px">
+      <input type="checkbox" ${S.soCapitais?'checked':''} data-ac="capitais" style="width:14px;height:14px;margin:0">
+      <span style="display:flex;flex-direction:column;gap:2px;min-width:0">
+        <span style="font-weight:600">Só capitais</span>
+        <span class="nota">Exclui os cinco veículos com sede fora da capital.</span>
+      </span>
+      <span class="qt">${fmt(META.corpus.interior)}</span>
+    </label>
+
+    <span class="sub" data-dica="eng" style="margin-top:4px">Engajamento</span>
+    <div class="lista">
+      ${faixas.map(([nome,v],i) => `
+        <label style="grid-template-columns:14px minmax(0,1fr) auto">
+          <input type="radio" name="eng" ${Math.abs(S.engP-v)<1e-9?'checked':''} data-ac="eng" data-v="${v}" style="width:14px;height:14px;margin:0">
+          <span class="nm">${nome}</span><span class="qt">${fmt(CT.eng[i])}</span>
+        </label>`).join('')}
+    </div>
+    <div class="caixa">
+      <div class="cab">
+        <span class="sub" style="cursor:default">Corte arbitrário</span>
+        <span class="nar" style="font-size:12px;font-weight:700;color:#1c4d38;font-variant-numeric:tabular-nums;white-space:nowrap">${pct===0?'sem corte':'percentil '+pct}</span>
+      </div>
+      <input type="range" min="0" max="98" step="1" value="${pct}" data-ac="corte" data-dica="corte" style="width:100%;margin:0">
+      <span class="nota">${pct===0
+        ? 'Todas as publicações do recorte, de qualquer nível de interação.'
+        : 'Mantém as ' + (100-pct) + '% mais engajadas do corpus.'}</span>
+    </div>
+    <div class="aviso">No decil mais engajado, dois veículos concentram 48% das publicações. Filtrar por engajamento seleciona, em boa medida, os veículos grandes.</div>
+
+    <div class="cab" style="margin-top:4px">
+      <span class="sub" data-dica="periodo">Período</span>
+      <span class="nar" style="font-size:11px;color:#8c877c;white-space:nowrap">arraste na linha do tempo</span>
+    </div>
+    <div class="lista">
+      ${presets.map(([nome,a,b],i) => `
+        <label style="grid-template-columns:14px minmax(0,1fr) auto">
+          <input type="radio" name="per" ${S.d0===a&&S.d1===b?'checked':''} data-ac="periodo" data-a="${a}" data-b="${b}" data-n="${esc(nome)}" style="width:14px;height:14px;margin:0">
+          <span class="nm">${nome}</span><span class="qt">${fmt(CT.periodo[i])}</span>
+        </label>`).join('')}
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:8px;background:#dfddd2;border:1px solid #d5d3c6;padding:11px;margin-top:8px">
+      <span class="rot" data-dica="pintura">Cor dos pontos</span>
+      <span class="nota" style="color:#4a5148">Não filtra nada: só muda a cor e o contraste. O total em tela não se move.</span>
+      <div class="lista">
+        ${[['tema','Por macro-tema'],['estado','Por estado']].map(([v,nome]) => `
+          <label style="grid-template-columns:14px minmax(0,1fr)">
+            <input type="radio" name="cor" ${S.pintura===v?'checked':''} data-ac="pintura" data-v="${v}" style="width:14px;height:14px;margin:0">
+            <span>${nome}</span>
+          </label>`).join('')}
+      </div>
+      <label data-dica="destaque" style="display:flex;flex-direction:column;gap:4px;cursor:pointer">
+        <span class="sub" style="cursor:pointer">Destacar campo</span>
+        <select data-ac="destaque">
+          <option value="nenhum" ${S.destaque==='nenhum'?'selected':''}>Nenhum</option>
+          <option value="ambiente" ${S.destaque==='ambiente'?'selected':''}>Meio ambiente e natureza</option>
+          <option value="violencia" ${S.destaque==='violencia'?'selected':''}>Violência e criminalidade</option>
+          <option value="eleitoral" ${S.destaque==='eleitoral'?'selected':''}>Processo eleitoral</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="aviso">Proximidade visual não é proximidade semântica: apenas 7,5% dos vizinhos mais próximos no espaço original também são os mais próximos na tela.</div>
+  </div>`;
+}
+
+/* ============================ painel direito ============================ */
+function htmlPublicacao(){
+  const i = S.sel, t = PT[i];
+  const g = PCI[i] >= 0 ? META.clusters[PCI[i]] : null;
+  const cor = t < 0 ? CINZA_NC : META.temas[t].cor;
+  const pb = PUF[i] >= META.corUF.length;
+  const viz = vizinhos(i);
+  const texto = TXT ? TXT[i] : null;
+  const link = LK && LK[i] ? 'https://www.instagram.com/' + LK[i] + '/' : null;
+  return `
+  <div class="bloco escuro" style="gap:9px">
+    <div class="cab">
+      <span class="rot v" style="cursor:default">Publicação selecionada</span>
+      <button type="button" class="lnk v" data-ac="fecharPub">Fechar</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="width:11px;height:11px;border-radius:50%;background:${cor};flex:none"></span>
+      <span class="nar" style="font-size:15px;font-weight:600">${t<0?'Não classificada':esc(META.temas[t].nome)}</span>
+    </div>
+    <span style="font-size:11.5px;color:#9aa298;line-height:1.45">${pb?'Paraíba (fora da Amazônia Legal)':esc(META.ufs[PUF[i]]||'—')} · ${esc(META.segmentos[PSEG[i]])} · ${esc(META.tipos[PTV[i]])}</span>
+    ${PLOC[i]===1 ? '<span style="font-size:11px;color:#e2705f;line-height:1.4">Veículo com sede fora da capital</span>' : ''}
+    ${g ? `<span style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;border-top:1px solid #26332c;padding-top:8px">
+      <span class="nar" style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#7d857c;font-weight:700;white-space:nowrap">Cluster ${g.id}</span>
+      <span class="nar" style="font-size:13px;font-weight:700;color:#7fc49a;word-break:break-word">${esc(g.nome)}</span>
+    </span>` : ''}
+  </div>
+  <div class="bloco" style="gap:12px">
+    <div style="display:flex;flex-direction:column;gap:5px">
+      <span class="sub" style="cursor:default">Veículo</span>
+      <span style="font-size:13.5px;font-weight:600">${esc(META.veiculos[PVEI[i]] || '—')}</span>
+      <span style="font-size:11.5px;color:#6b7169">${dataCompleta(PDIA[i])} · ${fmt(Math.round(PENG[i]))} interações · percentil ${PEP[i]}</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:5px">
+      <span class="sub" style="cursor:default">Texto da publicação</span>
+      <div style="background:#f0efe7;border:1px solid #d5d3c6;padding:11px;display:flex;flex-direction:column;gap:6px">
+        ${texto == null
+          ? '<span class="nota">Carregando os textos das publicações…</span>'
+          : `<span style="font-size:12.5px;line-height:1.55;word-break:break-word">${esc(texto)}${texto.length>=220?'…':''}</span>`}
+        ${link ? `<a href="${esc(link)}" target="_blank" rel="noopener" class="nar" style="font-size:11px;padding-top:3px">Abrir no Instagram ↗</a>` : ''}
+      </div>
+    </div>
+    ${g ? `<div style="display:flex;flex-direction:column;gap:5px">
+      <span class="sub" style="cursor:default">Termos do cluster</span>
+      <div style="display:flex;flex-wrap:wrap;gap:4px">
+        ${g.p.slice(0,10).map(p => `<span style="background:#f0efe7;border:1px solid #d5d3c6;padding:2px 6px;font-size:11px;border-radius:2px">${esc(p)}</span>`).join('')}
+      </div>
+    </div>` : ''}
+  </div>
+  <div class="bloco" style="border-bottom:0;gap:8px">
+    <span class="sub" data-dica="vizinhos">Cinco publicações mais parecidas</span>
+    ${!NB ? '<span class="nota">Carregando os vizinhos semânticos…</span>' : (viz.length ? `
+    <div class="lista">
+      ${viz.map(j => {
+        const tj = PT[j];
+        return `<div data-ac="irPost" data-i="${j}" style="grid-template-columns:9px minmax(0,1fr) auto;gap:4px 9px;padding:8px">
+          <span class="bola" style="background:${tj<0?CINZA_NC:META.temas[tj].cor}"></span>
+          <span class="nm">${tj<0?'Não classificada':esc(META.temas[tj].nome)}</span>
+          <span class="nar" style="font-size:11px;color:#8c877c;font-variant-numeric:tabular-nums;white-space:nowrap">${fmt(Math.round(PENG[j]))}</span>
+          <span></span>
+          <span style="grid-column:2/4;font-size:11px;color:#6b7169;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(META.veiculos[PVEI[j]]||'—')} · ${esc(META.ufs[PUF[j]]||'—')} · ${dataDoDia(PDIA[j])}</span>
+        </div>`; }).join('')}
+    </div>` : '<span class="nota">Esta publicação não tem vizinhos calculados: o cluster tem uma linha só.</span>')}
+    <span class="nota">As retas no mapa ligam a publicação selecionada a estas cinco. A semelhança é medida no espaço original de 384 dimensões, não na distância que você vê na tela.</span>
+    <button type="button" class="btnp" data-ac="voltarFiltros" style="margin-top:4px">↤ Voltar aos filtros</button>
+  </div>`;
+}
+
+function htmlCluster(){
+  const k = S.selCl, g = META.clusters[k], cor = META.temas[g.t].cor;
+  let dentro = 0;
+  const porUF = new Int32Array(META.ufs.length);
+  const exemplos = [];
+  for(let i = 0; i < N; i++){
+    if(PCI[i] !== k || !MASK[i]) continue;
+    dentro++;
+    if(PUF[i] >= 0) porUF[PUF[i]]++;
+    if(exemplos.length < 3) exemplos.push(i);
+  }
+  const maxUF = Math.max(1, ...porUF);
+  const ufs = [...porUF].map((q,i) => [META.ufs[i], q, i]).filter(x => x[1] > 0)
+    .sort((a,b) => b[1] - a[1]).slice(0, 6);
+  const perto = META.clusters.map((c,j) => [j, SIMC[k*NC + j]]).filter(p => p[0] !== k)
+    .sort((a,b) => b[1] - a[1]).slice(0, 5);
+  return `
+  <div class="bloco escuro" style="gap:9px">
+    <div class="cab">
+      <span class="rot v" style="cursor:default">Cluster selecionado</span>
+      <button type="button" class="lnk v" data-ac="fecharCluster">Fechar</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:5px">
+      <span class="nar" style="font-size:22px;font-weight:700;line-height:1.15;color:#e8e6de;word-break:break-word">${esc(g.nome)}</span>
+      <span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span class="nar" style="font-size:11px;letter-spacing:.08em;font-weight:700;color:${cor};border:1px solid ${cor};padding:1px 6px;border-radius:2px;white-space:nowrap">C${g.id}</span>
+        <span class="nar" style="font-size:13px;font-weight:600;color:#9aa298">${esc(META.temas[g.t].nome)}</span>
+      </span>
+    </div>
+    <div style="display:flex;align-items:baseline;gap:7px;flex-wrap:wrap">
+      <span class="nar" style="font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;color:#7fc49a;line-height:1">${fmt(dentro)}</span>
+      <span class="nar" style="font-size:11.5px;color:#9aa298">no recorte, de ${fmt(g.n)} no cluster</span>
+    </div>
+    <div class="barra"><i style="width:${Math.max(1, Math.round(dentro/Math.max(1,g.n)*100))}%"></i></div>
+    <span style="font-size:11px;line-height:1.45;color:#9aa298">${dentro >= g.n
+      ? 'Nenhum filtro corta este cluster: ele aparece inteiro no mapa.'
+      : 'Os filtros ativos retiram ' + fmt(g.n - dentro) + ' publicações deste cluster, e a bolha encolhe na mesma proporção.'}</span>
+  </div>
+  <div class="bloco" style="gap:8px">
+    <span class="sub" style="cursor:default">Termos característicos</span>
+    <div style="display:flex;flex-wrap:wrap;gap:4px">
+      ${g.p.map(p => `<span style="background:#f0efe7;border:1px solid #d5d3c6;padding:2px 6px;font-size:11px;border-radius:2px">${esc(p)}</span>`).join('')}
+    </div>
+  </div>
+  <div class="bloco" style="gap:8px">
+    <span class="sub" style="cursor:default">Estados no recorte</span>
+    <div style="display:flex;flex-direction:column;gap:5px">
+      ${ufs.map(([nome,q]) => `
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) 52px;gap:9px;align-items:center;font-size:12px">
+          <span style="display:flex;flex-direction:column;gap:3px;min-width:0">
+            <span class="nm">${esc(nome)}</span>
+            <span style="height:3px;background:#d5d3c6;border-radius:2px;overflow:hidden"><span style="display:block;height:100%;background:${cor};width:${Math.round(q/maxUF*100)}%"></span></span>
+          </span>
+          <span class="qt" style="text-align:right">${fmt(q)}</span>
+        </div>`).join('')}
+    </div>
+  </div>
+  <div class="bloco" style="gap:8px">
+    <span class="sub" style="cursor:default">Exemplos de publicação</span>
+    <div style="display:flex;flex-direction:column;gap:7px">
+      ${exemplos.length ? exemplos.map(i => `
+        <div data-ac="irPost" data-i="${i}" style="background:#f0efe7;border:1px solid #d5d3c6;padding:10px;display:flex;flex-direction:column;gap:5px;cursor:pointer">
+          <span style="font-size:12px;line-height:1.5">${TXT ? esc(TXT[i].slice(0,120)) + '…' : 'Carregando…'}</span>
+          <span class="nar" style="font-size:11px;color:#6b7169;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(META.veiculos[PVEI[i]]||'—')} · ${esc(META.ufs[PUF[i]]||'—')} · ${dataDoDia(PDIA[i])} · ${fmt(Math.round(PENG[i]))} interações</span>
+        </div>`).join('') : '<span class="nota">Nenhuma publicação deste cluster passa pelos filtros atuais.</span>'}
+    </div>
+    <span class="nota">Clique num exemplo para abri-lo no mapa de posts.</span>
+  </div>
+  <div class="bloco" style="border-bottom:0;gap:8px">
+    <span class="sub" style="cursor:default">Clusters mais próximos</span>
+    <div class="lista">
+      ${perto.map(([j,s]) => {
+        const c2 = META.clusters[j];
+        return `<div data-ac="irCluster" data-i="${j}" style="grid-template-columns:9px auto minmax(0,1fr) auto;gap:9px;padding:8px">
+          <span class="bola" style="background:${META.temas[c2.t].cor}"></span>
+          <span class="nar" style="font-weight:700;color:#4a5148;white-space:nowrap">C${c2.id}</span>
+          <span style="display:flex;flex-direction:column;gap:1px;min-width:0">
+            <span class="nm">${esc(c2.nome)}</span>
+            <span class="nm" style="color:#8c877c;font-size:11px">${esc(META.temas[c2.t].nome)}</span>
+          </span>
+          <span class="nar" style="font-size:11px;color:#8c877c;font-variant-numeric:tabular-nums;white-space:nowrap">${s.toFixed(2).replace('.',',')}</span>
+        </div>`; }).join('')}
+    </div>
+    <span class="nota">Similaridade de cosseno entre centroides, no espaço completo — não a distância que aparece na tela.</span>
+    <button type="button" class="btnp" data-ac="fecharCluster" style="margin-top:4px">↤ Voltar aos filtros</button>
+  </div>`;
+}
+
+function htmlNo(){
+  const cl = ehClRede();
+  const nos = nosRede();
+  const ref = nos.find(n => n.id === S.selNo);
+  if(!ref) return '';
+  const arestas = nos.filter(n => n.id !== ref.id).map(n => ({ n, v: simDe(ref, n) }))
+    .sort((a,b) => b.v - a.v).slice(0, cl ? 14 : NT);
+  const grau = arestas.filter(a => a.v >= S.simMin).length;
+  return `
+  <div class="bloco escuro" style="gap:9px">
+    <div class="cab">
+      <span class="rot v" style="cursor:default">Nó selecionado</span>
+      <button type="button" class="lnk v" data-ac="fecharNo">Fechar</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:9px">
+      <span style="width:13px;height:13px;border-radius:50%;background:${ref.cor};flex:none"></span>
+      <span class="nar" style="font-size:16px;font-weight:600">${esc(ref.cod)} · ${esc(ref.nome)}</span>
+    </div>
+    <span style="font-size:11.5px;color:#9aa298;line-height:1.45">${fmt(ref.vol)} publicações na base · ${grau === 1 ? '1 ligação' : grau + ' ligações'} no limiar ≥ ${S.simMin.toFixed(2).replace('.',',')}</span>
+  </div>
+  <div class="bloco" style="border-bottom:0;gap:9px">
+    <span class="sub" style="cursor:default">Arestas deste nó</span>
+    <div class="lista">
+      ${arestas.map(a => {
+        const liga = a.v >= S.simMin;
+        const cv = liga ? '#1c4d38' : '#9c9a8f';
+        return `<div data-ac="irNo" data-i="${a.n.id}" style="grid-template-columns:9px minmax(0,1fr) auto;gap:4px 9px;padding:8px;background:${liga?'#f0efe7':'#e9e7dd'}">
+          <span class="bola" style="background:${a.n.cor}"></span>
+          <span class="nm" style="color:${liga?'#1a1f1c':'#8c877c'}">${esc(a.n.nome)}</span>
+          <span class="nar" style="font-size:12px;font-weight:700;color:${cv};font-variant-numeric:tabular-nums;white-space:nowrap">${a.v.toFixed(2).replace('.',',')}</span>
+          <span></span>
+          <span style="grid-column:2/4;height:3px;background:#dcdad0;border-radius:2px;overflow:hidden"><span style="display:block;height:100%;background:${cv};width:${Math.round(Math.max(2, (a.v - .18)/.68*100))}%"></span></span>
+        </div>`; }).join('')}
+    </div>
+    <span class="nota">Em verde, as ligações desenhadas no limiar atual. Em cinza, os pares que ficaram abaixo do corte — baixe o limiar para vê-los no mapa. Clique numa linha para pular para aquele nó.</span>
+  </div>`;
+}
+
+/* ============================ render ============================ */
+function painelDireitoAberto(){
+  return (S.aba === 'posts' && S.sel != null) || (S.aba === 'clusters' && S.selCl != null)
+      || (S.aba === 'rede' && S.selNo != null);
+}
+function render(){
+  const app = document.getElementById('app');
+  const dir = painelDireitoAberto(), ehRede = S.aba === 'rede';
+  /* Colunas explícitas: sem grid-column fixo em cada painel, esconder um faz o grid
+     realocar o mapa para a coluna errada. */
+  app.style.gridTemplateColumns = (ehRede && dir && S.esq)
+    ? 'minmax(0,1fr) minmax(0,2fr) minmax(0,1fr)'
+    : (dir ? '0 minmax(0,2fr) minmax(0,1fr)'
+           : (S.esq ? 'minmax(0,1fr) minmax(0,2fr) 0' : '0 minmax(0,1fr) 0'));
+  const elE = document.getElementById('esq'), elD = document.getElementById('dir');
+  elE.style.display = (S.esq && (!dir || ehRede)) ? 'block' : 'none';
+  elD.style.display = dir ? 'block' : 'none';
+  elE.innerHTML = htmlEsq();
+  elD.innerHTML = dir ? (S.aba === 'posts' ? htmlPublicacao()
+                        : S.aba === 'clusters' ? htmlCluster() : htmlNo()) : '';
+
+  document.getElementById('hTotal').textContent = fmt(EM_TELA);
+  document.getElementById('hBase').textContent = fmt(baseAtual());
+  document.querySelectorAll('header .tab').forEach(b => b.classList.toggle('on', b.dataset.aba === S.aba));
+  const cl = ehClRede();
+  document.getElementById('mTitulo').textContent = ehRede
+    ? (cl ? 'Rede de clusters' : 'Rede de macro-temas')
+    : (S.aba === 'clusters' ? 'Mapa de clusters' : 'Mapa de posts');
+  document.getElementById('mSub').textContent = ehRede
+    ? (cl ? nosRede().length + ' clusters' : NT + ' macro-temas') +
+      ' · espessura é similaridade · limiar em ≥ ' + S.simMin.toFixed(2).replace('.',',')
+    : (S.aba === 'clusters'
+        ? 'Área proporcional ao volume no recorte · amplie para ver os nomes'
+        : 'Cada ponto é uma publicação · distância é distância de assunto');
+  document.getElementById('mNota').textContent = S.aba === 'posts'
+    ? 'Clique num ponto para abrir a publicação'
+    : (S.aba === 'clusters' ? 'Clique numa bolha para abrir o cluster' : 'Clique num nó para ver suas arestas');
+  document.getElementById('mZoom').textContent = S.z > 1.02
+    ? 'Zoom ' + S.z.toFixed(1).replace('.',',') + '× · arraste para deslocar'
+    : 'Role para ampliar · arraste para deslocar';
+  document.getElementById('bEnquadrar').style.display = S.z > 1.02 ? 'block' : 'none';
+  cvMapa.style.cursor = S.pan ? 'grabbing' : (S.aba === 'posts' ? 'crosshair' : 'grab');
+  document.getElementById('puxaEsq').style.display = (!S.esq || (dir && !ehRede)) ? 'flex' : 'none';
+  document.getElementById('puxaDir').style.display = (!dir && S.ultimo != null && S.aba === 'posts') ? 'flex' : 'none';
+  document.getElementById('tlA').textContent = dataDoDia(S.d0);
+  document.getElementById('tlB').textContent = dataDoDia(S.d1 - 1);
+  document.getElementById('tlD').textContent = '· ' + (S.d1 - S.d0) + ' dias';
+  document.getElementById('bTodoPeriodo').style.display = (S.d0 > 0 || S.d1 < DIAS) ? 'inline' : 'none';
+  pintar();
+}
+function pintar(){ pintarMapa(); pintarLinha(); }
+
+/* ============================ interação: painéis ============================ */
+function limita(cx, cy, z){
+  if(z <= 1) return { cx:.5, cy:.5, z:1 };
+  const meio = 0.5/z;
+  return { z, cx: Math.max(meio, Math.min(1-meio, cx)), cy: Math.max(meio, Math.min(1-meio, cy)) };
+}
+function aplicaZoom(o){ S.z = o.z; S.cx = o.cx; S.cy = o.cy; }
+
+const ACOES = {
+  fecharEsq: () => { S.esq = false; render(); },
+  voltarFiltros: () => { S.esq = true; S.sel = null; render(); },
+  fecharPub: () => { S.sel = null; S.esq = true; render(); },
+  fecharCluster: () => { S.selCl = null; S.esq = true; render(); },
+  fecharNo: () => { S.selNo = null; render(); },
+  pb: () => registrar(S.semParaiba ? 'Paraíba incluída' : 'Paraíba excluída (padrão)',
+        () => { S.semParaiba = !S.semParaiba;
+                if(!S.semParaiba) S.estados = META.ufs.map((u,i) => i < META.corUF.length ? S.estados[i] : true); }),
+  nc: () => registrar(S.semNaoClass ? 'Não classificadas incluídas' : 'Não classificadas excluídas (padrão)',
+        () => { S.semNaoClass = !S.semNaoClass; }),
+  voltarPadrao: () => registrar('Voltou ao recorte padrão', padrao),
+  reiniciar: () => { padrao(); S.hist = []; S.ultimo = null; S.selCl = null; S.selNo = null;
+                     S.temasRede = META.temas.map(() => true); S.simMin = .55; S.modoRede = 'temas';
+                     S.z = 1; S.cx = .5; S.cy = .5; recalcular(); render(); },
+  todosTemas: () => { const t = S.temas.every(Boolean);
+        registrar(t ? 'Todos os macro-temas fora' : 'Todos os macro-temas dentro',
+                  () => { S.temas = META.temas.map(() => !t); }); },
+  todosRede: () => { const t = S.temasRede.every(Boolean);
+        S.temasRede = META.temas.map(() => !t); S.selNo = null; render(); },
+  redeTemas: () => { S.modoRede = 'temas'; S.selNo = null; S.simMin = .55; render(); },
+  redeClusters: () => { S.modoRede = 'clusters'; S.selNo = null; S.simMin = .70; render(); },
+  capitais: () => registrar(S.soCapitais ? 'Sedes fora da capital de volta' : 'Só capitais',
+        () => { S.soCapitais = !S.soCapitais; }),
+};
+
+function ligarPainel(el){
+  el.addEventListener('click', ev => {
+    const alvo = ev.target.closest('[data-ac]');
+    if(!alvo) return;
+    const ac = alvo.dataset.ac, i = +alvo.dataset.i;
+    if(ACOES[ac]){ ev.preventDefault(); ACOES[ac](); return; }
+    if(ac === 'soTema'){
+      ev.preventDefault(); ev.stopPropagation();
+      registrar('Só ' + META.temas[i].nome, () => { S.temas = META.temas.map((x,k) => k === i); });
+    } else if(ac === 'irPost'){
+      S.sel = i; S.ultimo = i; S.selCl = null; S.aba = 'posts'; S.esq = false;
+      aproximar(i); render();
+    } else if(ac === 'irCluster'){ S.selCl = i; S.aba = 'clusters'; S.esq = false; render(); }
+    else if(ac === 'irNo'){ S.selNo = i; render(); }
+  });
+  el.addEventListener('change', ev => {
+    const alvo = ev.target.closest('[data-ac]'); if(!alvo) return;
+    const ac = alvo.dataset.ac, i = +alvo.dataset.i;
+    if(ac === 'tema') registrar((S.temas[i] ? 'Fora: ' : 'Dentro: ') + META.temas[i].nome,
+        () => { S.temas[i] = !S.temas[i]; });
+    else if(ac === 'estado') registrar((S.estados[i] ? 'Fora: ' : 'Dentro: ') + META.ufs[i],
+        () => { S.estados[i] = !S.estados[i]; });
+    else if(ac === 'suporte') registrar((S.suportes[i] ? 'Fora: ' : 'Dentro: ') + META.segmentos[i],
+        () => { S.suportes[i] = !S.suportes[i]; });
+    else if(ac === 'perfil') registrar((S.perfis[i] ? 'Fora: ' : 'Dentro: ') + META.tipos[i],
+        () => { S.perfis[i] = !S.perfis[i]; });
+    else if(ac === 'eng'){ const v = +alvo.dataset.v;
+        registrar('Engajamento: ' + (v === 0 ? 'todas' : v === .5 ? 'metade mais engajada' : 'decil mais engajado'),
+                  () => { S.engP = v; }); }
+    else if(ac === 'periodo'){ const a = +alvo.dataset.a, b = +alvo.dataset.b;
+        registrar('Período: ' + alvo.dataset.n.toLowerCase(), () => { S.d0 = a; S.d1 = b; }); }
+    else if(ac === 'pintura'){ S.pintura = alvo.dataset.v; render(); }
+    else if(ac === 'destaque'){
+        S.destaque = alvo.value;
+        iDestaque = S.destaque === 'nenhum' ? -1
+          : META.temas.findIndex(t => t.nome === DESTAQUES[S.destaque]);
+        render(); }
+    else if(ac === 'temaRede'){ S.temasRede[i] = !S.temasRede[i];
+        if(S.selNo === i && !ehClRede()) S.selNo = null; render(); }
+    else if(ac === 'corte'){ const v = +alvo.value/100;
+        registrar(v === 0 ? 'Engajamento: sem corte' : 'Engajamento: acima do percentil ' + Math.round(v*100),
+                  () => { S.engP = v; }); }
+  });
+  el.addEventListener('input', ev => {
+    const alvo = ev.target.closest('[data-ac]'); if(!alvo) return;
+    if(alvo.dataset.ac === 'simMin'){ S.simMin = +alvo.value/100; render(); }
+  });
+}
+
+/* busca: no texto quando ele já chegou, senão só macro-tema e estado */
+let tBusca = null;
+document.getElementById('esq').addEventListener('input', ev => {
+  if(ev.target.id !== 'busca') return;
+  const v = ev.target.value;
+  clearTimeout(tBusca);
+  tBusca = setTimeout(() => {
+    const foco = document.activeElement === ev.target;
+    const pos = ev.target.selectionStart;
+    aplicaBusca(v);
+    if(foco){ const novo = document.getElementById('busca');
+      if(novo){ novo.focus(); try{ novo.setSelectionRange(pos, pos); }catch(_){} } }
+  }, 260);
+});
+function aplicaBusca(v){
+  const q = v.trim().toLowerCase();
+  if(q.length < 2){ BUSCA_HIT = null; registrar('Busca limpa', () => { S.busca = ''; }); return; }
+  const hit = new Set();
+  for(let i = 0; i < N; i++){
+    const t = PT[i];
+    const nome = t < 0 ? 'não classificada' : META.temas[t].nome;
+    const uf = META.ufs[PUF[i]] || '';
+    if(nome.toLowerCase().includes(q) || uf.toLowerCase().includes(q)
+       || (TXT && TXT[i].toLowerCase().includes(q))){ hit.add(i); }
+  }
+  BUSCA_HIT = hit;
+  registrar('Busca "' + v.trim() + '"', () => { S.busca = v; });
+}
+
+/* ============================ interação: mapa ============================ */
+let arr = null;
+cvMapa.addEventListener('wheel', e => {
+  e.preventDefault();
+  const r = cvMapa.getBoundingClientRect();
+  const mx = (e.clientX - r.left)/r.width, my = (e.clientY - r.top)/r.height;
+  const dmx = S.cx + (mx - .5)/S.z, dmy = S.cy + (my - .5)/S.z;
+  const z = Math.max(1, Math.min(14, S.z*(e.deltaY < 0 ? 1.16 : 1/1.16)));
+  aplicaZoom(limita(dmx - (mx - .5)/z, dmy - (my - .5)/z, z));
+  render();
+}, { passive:false });
+cvMapa.addEventListener('mousedown', e => {
+  arr = { x:e.clientX, y:e.clientY, cx:S.cx, cy:S.cy, mov:false };
+});
+window.addEventListener('mousemove', e => {
+  if(!arr) return;
+  const r = cvMapa.getBoundingClientRect();
+  const dx = e.clientX - arr.x, dy = e.clientY - arr.y;
+  if(!arr.mov && Math.hypot(dx, dy) < 4) return;   // menos de 4 px é clique, não arrasto
+  arr.mov = true; S.pan = true;
+  aplicaZoom(limita(arr.cx - dx/(r.width*S.z), arr.cy - dy/(r.height*S.z), S.z));
+  pintar();
+  cvMapa.style.cursor = 'grabbing';
+});
+window.addEventListener('mouseup', e => {
+  if(!arr) return;
+  const mov = arr.mov; arr = null; S.pan = false;
+  if(!mov) clicarMapa(e); else render();
+});
+function clicarMapa(e){
+  const r = cvMapa.getBoundingClientRect();
+  const mx = e.clientX - r.left, my = e.clientY - r.top;
+  if(mx < 0 || my < 0 || mx > r.width || my > r.height) return;
+  if(S.aba !== 'posts'){
+    let alvo = null, dmin = Infinity;
+    for(const [id, x, y, rad] of HITS){
+      const d = Math.hypot(x - mx, y - my);
+      if(d <= rad + 4 && d < dmin){ dmin = d; alvo = id; }
+    }
+    if(alvo == null) return;
+    if(S.aba === 'clusters'){ S.selCl = alvo; S.esq = false; } else S.selNo = alvo;
+    render(); return;
+  }
+  const dx = S.cx + (mx/r.width - .5)/S.z, dy = S.cy + (my/r.height - .5)/S.z;
+  let melhor = null, dmin = Infinity;
+  for(let i = 0; i < N; i++){
+    if(!MASK[i]) continue;
+    const d = (PX[i]-dx)*(PX[i]-dx) + (PY[i]-dy)*(PY[i]-dy);
+    if(d < dmin){ dmin = d; melhor = i; }
+  }
+  const tol = 0.03/S.z;
+  if(melhor != null && Math.sqrt(dmin) < tol){
+    S.sel = melhor; S.ultimo = melhor; S.esq = false;
+  } else { S.sel = null; S.esq = true; }
+  render();
+}
+function aproximar(i){
+  const z = Math.max(S.z, 6);
+  aplicaZoom(limita(PX[i], PY[i], z));
+}
+
+/* linha do tempo */
+const diaDoEvento = e => {
+  const r = cvLinha.getBoundingClientRect();
+  return Math.max(0, Math.min(DIAS-1, Math.floor((e.clientX - r.left)/r.width*DIAS)));
+};
+cvLinha.addEventListener('mousedown', e => { const d = diaDoEvento(e); S.arraste = { a:d, b:d }; pintarLinha(); });
+cvLinha.addEventListener('mousemove', e => { if(S.arraste){ S.arraste.b = diaDoEvento(e); pintarLinha(); } });
+const soltarLinha = () => {
+  const a = S.arraste; if(!a) return;
+  const d0 = Math.min(a.a, a.b), d1 = Math.max(a.a, a.b) + 1;
+  S.arraste = null;
+  if(d1 - d0 < 2){ pintarLinha(); return; }        // arrastos de menos de 2 dias são ruído
+  registrar('Período: ' + dataDoDia(d0) + ' a ' + dataDoDia(d1-1), () => { S.d0 = d0; S.d1 = d1; });
+};
+cvLinha.addEventListener('mouseup', soltarLinha);
+cvLinha.addEventListener('mouseleave', soltarLinha);
+document.getElementById('bTodoPeriodo').onclick = () =>
+  registrar('Período: todo o período', () => { S.d0 = 0; S.d1 = DIAS; });
+document.getElementById('bEnquadrar').onclick = () => { S.z = 1; S.cx = .5; S.cy = .5; render(); };
+document.getElementById('puxaEsq').onclick = () => { S.esq = true; S.sel = null; render(); };
+document.getElementById('puxaDir').onclick = () => { S.sel = S.ultimo; S.esq = false; render(); };
+document.querySelectorAll('header .tab').forEach(b => b.onclick = () => {
+  trocarAba(b.dataset.aba);
+});
+function trocarAba(aba){
+  S.aba = aba;
+  if(aba === 'posts'){ S.selCl = null; S.selNo = null; }
+  else if(aba === 'clusters'){ S.sel = null; S.selNo = null; }
+  else { S.sel = null; S.selCl = null; }
+  /* Trocar de visão fecha o painel de detalhe; sem reabrir o esquerdo, a aba nova estrearia
+     sem nenhum controle à vista — inclusive os da rede, que só existem lá. */
+  S.esq = true;
+  S.z = 1; S.cx = .5; S.cy = .5;
+  render();
+}
+
+/* ============================ dicas ============================ */
+const DICAS = {
+  inicio: ['Voltar ao início', 'Abre a página de apresentação do projeto: metodologia, as três visões e as limitações declaradas.'],
+  abaPosts: ['Mapa de posts', 'Uma publicação por ponto. Clique num ponto para abrir o texto, o veículo e as cinco publicações mais parecidas.'],
+  abaClusters: ['Mapa de clusters', 'Os 120 agrupamentos detectados pelo modelo, com área proporcional ao volume. Ao ampliar, aparecem os nomes formados pelos termos mais característicos de cada cluster.'],
+  abaRede: ['Rede de macro-temas', 'Quais macro-temas se aproximam entre si e com que força. É calculada uma vez sobre a base inteira, por isso não responde a filtros.'],
+  total: ['Total em tela', 'Publicações que passam por todos os filtros ativos. O segundo número é a base em vigor.'],
+  png: ['Exportar PNG', 'Salva exatamente o que está na tela, com o recorte em vigor impresso na imagem. Não exporta a base inteira.'],
+  csv: ['Exportar CSV', 'Exporta as publicações do recorte em vigor, uma por linha, com macro-tema, cluster, veículo, estado, data, engajamento e link.'],
+  recorte: ['Recorte em vigor', 'A lista completa do que está sendo mostrado e do que ficou de fora. As duas primeiras linhas são exclusões de método, e podem ser desligadas.'],
+  padraoPb: ['Exclusão da Paraíba', 'A coleta trouxe publicações da Paraíba por engano — o estado não pertence à Amazônia Legal. Clique para incluí-las de volta e ver o efeito.'],
+  padraoNc: ['Não classificadas', 'Publicações que o modelo não conseguiu atribuir a nenhum cluster. Clique para incluí-las: elas entram no mapa em cinza.'],
+  padrao: ['Voltar ao padrão', 'Devolve todos os filtros ao recorte padrão da pesquisa: só Amazônia Legal, sem não classificadas, todos os macro-temas, todo o período.'],
+  historico: ['Histórico de alterações', 'Cada mudança de filtro entra numerada, com quantas publicações entraram ou saíram e o total resultante. Serve para reconstruir o caminho de uma análise.'],
+  mapa: ['O que está no mapa', 'Tudo nesta seção recorta a base: mexer aqui muda o total em tela. Os contadores ao lado de cada opção são facetados.'],
+  busca: ['Busca textual', 'Filtra por macro-tema, estado e, assim que os textos terminam de carregar, pelo conteúdo das publicações.'],
+  tema: ['Filtro de macro-tema', 'O número ao lado é facetado: mostra quantas publicações aquela opção traz considerando os outros filtros já ativos.'],
+  estado: ['Filtro de estado', 'Os nove estados da Amazônia Legal com capital no corpus, do maior para o menor volume. A cor dos estados é uma rampa de areia a água escura, de propósito diferente das 13 cores categóricas dos macro-temas.'],
+  suporte: ['Suporte do veículo', 'Online, impresso, rádio ou televisão, do cadastro do Atlas. Rádio e televisão têm volume pequeno e concentrado: leia com o aviso abaixo.'],
+  eng: ['Engajamento', 'Recorta por percentil de interações. Os três botões são atalhos; a barra abaixo permite qualquer corte.'],
+  corte: ['Corte arbitrário', 'Mantém no mapa apenas as publicações acima do percentil escolhido. Em 0% nada é cortado; em 90% ficam as 10% mais engajadas.'],
+  periodo: ['Período', 'Recorta por data de publicação. Os atalhos usam os marcos eleitorais; arrastar na linha do tempo permite qualquer janela.'],
+  linha: ['Linha do tempo', 'Publicações por dia na base inteira, em cinza, e no recorte em vigor, em verde. Arraste para recortar por data; as linhas vermelhas são os dois turnos.'],
+  pintura: ['Cor dos pontos', 'Muda apenas a cor do que já está em tela. Nenhuma publicação entra ou sai do recorte.'],
+  destaque: ['Destacar campo', 'Não filtra nada: só reduz o contraste do que está fora do macro-tema escolhido, para achá-lo na massa de pontos.'],
+  perfil: ['Perfil de publicação', 'Do cadastro do Atlas: nativo digital publica em fluxo contínuo; diário e periódico transpõem a periodicidade do impresso. Parte das publicações não tem veículo identificado.'],
+  capitais: ['Só capitais', 'Cinco veículos do cadastro têm sede fora da capital — Rondonópolis, Lucas do Rio Verde, Canarana, Ariquemes e Açailândia. Ligue para excluí-los do recorte.'],
+  modoRede: ['Granularidade da rede', 'A rede pode ligar os 13 macro-temas ou descer aos 120 clusters. Em modo cluster, só entram os clusters dos macro-temas marcados abaixo.'],
+  vizinhos: ['Publicações mais parecidas', 'Vizinhos no espaço de 384 dimensões do modelo, calculados dentro do cluster. As retas no mapa mostram onde eles caíram na projeção — quase nunca ao lado.'],
+  ajuda: ['Ajuda', 'Como usar, as três visões, metodologia, limitações e glossário. Também abre com a tecla ?'],
+  zoom: ['Navegação no mapa', 'Role para ampliar em torno do cursor e arraste para deslocar. O enquadramento é limitado à moldura do mapa.'],
+  corAtiva: ['Cor ativa', 'As bolinhas coloridas aparecem sempre na seção que está pintando o mapa neste momento. Trocar a cor dos pontos move as bolinhas de lugar.'],
+  cluster: ['Clusters', 'Cada bolha é um dos 120 agrupamentos do modelo, com área proporcional ao volume DENTRO do recorte em vigor, sobre o maior cluster da base inteira. Clique numa bolha para abri-la.'],
+  simMin: ['Similaridade mínima', 'Só as ligações com similaridade igual ou acima do valor escolhido são desenhadas. Os valores são arredondados na origem, então o número exibido é o número comparado.'],
+  no: ['Nós da rede', 'Clique num nó para ver todas as suas arestas e o valor de similaridade de cada uma. Desmarcar um macro-tema o retira da rede.']
+};
+const elDica = document.getElementById('dica');
+document.addEventListener('mouseover', e => {
+  const alvo = e.target.closest('[data-dica]');
+  if(!alvo){ elDica.style.display = 'none'; return; }
+  const d = DICAS[alvo.dataset.dica];
+  if(!d){ elDica.style.display = 'none'; return; }
+  elDica.querySelector('b').textContent = d[0];
+  elDica.querySelector('span').textContent = d[1];
+  elDica.style.display = 'block';
+  const r = alvo.getBoundingClientRect(), cr = elDica.getBoundingClientRect();
+  let left = r.right + 10;
+  if(left + cr.width > window.innerWidth - 8) left = Math.max(8, r.left - cr.width - 10);
+  elDica.style.left = left + 'px';
+  elDica.style.top = Math.min(window.innerHeight - cr.height - 8, Math.max(8, r.top - 4)) + 'px';
+});
+document.addEventListener('mouseout', e => {
+  if(e.target.closest('[data-dica]')) elDica.style.display = 'none';
+});
+
+/* ============================ ajuda ============================ */
+const elAjuda = document.getElementById('ajuda');
+function abrirAjuda(pg){
+  elAjuda.style.display = 'flex';
+  if(pg) trocarPg(pg);
+}
+function trocarPg(pg){
+  document.querySelectorAll('#ajuda .tab').forEach(b => b.classList.toggle('on', b.dataset.pg === pg));
+  document.querySelectorAll('#ajuda .pg').forEach(p => p.classList.toggle('on', p.id === 'pg-' + pg));
+  document.getElementById('ajudaCorpo').scrollTop = 0;
+}
+document.getElementById('bAjuda').onclick = () => abrirAjuda();
+document.getElementById('bFechaAjuda').onclick = () => { elAjuda.style.display = 'none'; };
+elAjuda.onclick = e => { if(e.target === elAjuda) elAjuda.style.display = 'none'; };
+document.querySelectorAll('#ajuda .tab').forEach(b => b.onclick = () => trocarPg(b.dataset.pg));
+
+/* ============================ teclado ============================ */
+window.addEventListener('keydown', e => {
+  const t = e.target;
+  if(t && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) && e.key !== 'Escape') return;
+  const k = e.key;
+  if(k === '?' || (k === '/' && e.shiftKey)){ e.preventDefault(); abrirAjuda('como'); return; }
+  if(k === 'Escape'){
+    if(elAjuda.style.display === 'flex'){ elAjuda.style.display = 'none'; return; }
+    S.sel = null; S.selCl = null; S.selNo = null; S.esq = true; render(); return;
+  }
+  if(elAjuda.style.display === 'flex') return;
+  if(k === '1' || k === '2' || k === '3'){ trocarAba(['posts','clusters','rede'][+k - 1]); }
+  else if(k === '0'){ S.z = 1; S.cx = .5; S.cy = .5; render(); }
+  else if(k === '[' || k === ']'){ S.esq = !S.esq; render(); }
+});
+
+/* ============================ exportação ============================ */
+function salvar(blob, nome){
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = nome; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+document.getElementById('bPng').onclick = () => {
+  const dpr = window.devicePixelRatio || 1;
+  const rodape = Math.round(46*dpr);
+  const o = document.createElement('canvas');
+  o.width = cvMapa.width; o.height = cvMapa.height + rodape;
+  const c = o.getContext('2d');
+  c.fillStyle = '#0f1512'; c.fillRect(0, 0, o.width, o.height);
+  c.drawImage(cvMapa, 0, 0);
+  c.fillStyle = '#7fc49a';
+  c.font = '700 ' + Math.round(12*dpr) + 'px "Archivo Narrow", Archivo, sans-serif';
+  c.fillText('O Voto, A Bala e a Floresta · ' + fmt(EM_TELA) + ' publicações em tela',
+             Math.round(14*dpr), cvMapa.height + Math.round(18*dpr));
+  c.fillStyle = '#9aa298';
+  c.font = '400 ' + Math.round(10.5*dpr) + 'px Archivo, sans-serif';
+  const rec = blocosRecorte().map(r => r.texto).join(' · ');
+  c.fillText(rec.slice(0, 180), Math.round(14*dpr), cvMapa.height + Math.round(34*dpr));
+  o.toBlob(b => salvar(b, 'mapa_' + S.aba + '.png'));
+};
+document.getElementById('bCsv').onclick = () => {
+  /* Quebras de linha dentro do texto viram espaço: aspas resolvem para um parser correto,
+     mas quebram planilhas e scripts de linha em linha mundo afora. */
+  const q = s => '"' + String(s == null ? '' : s).replace(/\s+/g, ' ').replace(/"/g, '""') + '"';
+  const li = ['data,veiculo,uf,localidade,suporte,perfil,macro_tema,cluster_id,cluster,'
+            + 'engajamento,percentil_engajamento,link,texto'];
+  for(let i = 0; i < N; i++){
+    if(!MASK[i]) continue;
+    const t = PT[i], k = PCI[i];
+    li.push([
+      dataCompleta(PDIA[i]), q(META.veiculos[PVEI[i]]), META.ufs[PUF[i]] || '',
+      q(META.locais[PLOC[i]]), q(META.segmentos[PSEG[i]]), q(META.tipos[PTV[i]]),
+      q(t < 0 ? 'Não classificada' : META.temas[t].nome),
+      k < 0 ? -1 : META.clusters[k].id, q(k < 0 ? '—' : META.clusters[k].nome),
+      Math.round(PENG[i]), PEP[i],
+      q(LK && LK[i] ? 'https://www.instagram.com/' + LK[i] + '/' : ''),
+      q(TXT ? TXT[i] : '')
+    ].join(','));
+  }
+  salvar(new Blob(['﻿' + li.join('\n')], { type:'text/csv;charset=utf-8' }),
+         'recorte_' + (li.length - 1) + '_publicacoes.csv');
+};
+
+/* ============================ arranque ============================ */
+function falhou(e){
+  document.getElementById('carga').innerHTML =
+    '<span class="t">O explorador não conseguiu abrir</span>' +
+    '<span class="s" style="max-width:52ch;text-align:center;letter-spacing:0;text-transform:none;font-size:13px;line-height:1.6">' +
+    esc(String(e && e.message || e)) + '</span>' +
+    '<a href="index.html" class="s" style="color:#7fc49a">voltar ao início</a>';
+  console.error(e);
+}
+window.addEventListener('error', ev => { if(document.getElementById('app').hidden) falhou(ev.error || ev.message); });
+
+function estadoDaURL(){
+  const p = new URLSearchParams(location.search);
+  if(p.get('pb') === '0') S.semParaiba = false;
+  if(p.get('nc') === '0') S.semNaoClass = false;
+  const t = p.get('t');
+  if(t){
+    const ok = new Set(t.split(',').map(Number));
+    S.temas = META.temas.map((x,i) => ok.has(i));
+  }
+  return p.get('ajuda');
+}
+
+let RO = null;
+function ligarResize(){
+  const alvo = document.querySelector('main');
+  if(window.ResizeObserver && alvo){
+    RO = new ResizeObserver(() => pintar());   // só window.resize deixa o canvas em branco na 1ª pintura
+    RO.observe(alvo);
+  }
+  window.addEventListener('resize', pintar);
+}
+
+(async function(){
+ try{
+  progresso(.02, 'lendo o índice do corpus…');
+  META = await (await fetch('dados/meta.json')).json();
+  NT = META.temas.length; NC = META.clusters.length;
+  DIAS = META.diaMax + 1; T1 = META.turnos[0]; T2 = META.turnos[1];
+  CL_MAX = Math.max(...META.clusters.map(c => c.n));
+
+  progresso(.05, 'carregando as publicações…');
+  lerColunas(await baixar('dados/posts.bin.gz', 'carregando as publicações…', .05, .85));
+
+  PT = new Int16Array(N);
+  for(let i = 0; i < N; i++) PT[i] = PCI[i] < 0 ? -1 : META.clusters[PCI[i]].t;
+
+  padrao();
+  S.temasRede = META.temas.map(() => true);
+  const pgAjuda = estadoDaURL();
+
+  progresso(.92, 'montando o mapa…');
+  recalcular();
+  document.getElementById('app').hidden = false;
+  ligarPainel(document.getElementById('esq'));
+  ligarPainel(document.getElementById('dir'));
+  ligarResize();
+  render();
+  progresso(1, 'pronto');
+  document.getElementById('carga').style.display = 'none';
+  if(pgAjuda) abrirAjuda(pgAjuda);
+
+  // números do corpus dentro da ajuda
+  const c = META.corpus;
+  document.querySelectorAll('.d-pb').forEach(e => e.textContent = fmt(c.paraiba));
+  document.querySelectorAll('.d-nc').forEach(e => e.textContent = fmt(c.naoClass));
+  document.querySelectorAll('.d-cls').forEach(e => e.textContent = fmt(c.classificadas));
+  document.querySelectorAll('.d-base').forEach(e => e.textContent = fmt(c.analitico));
+  document.querySelectorAll('.d-int').forEach(e => e.textContent = fmt(c.interior));
+  document.getElementById('tabCorpus').innerHTML = [
+    ['Coletados', fmt(c.coletados), ''],
+    ['− duplicados na entrega da coleta', '−' + fmt(c.duplicados), '#e2705f'],
+    ['− veículos da Paraíba, fora da Amazônia Legal', '−' + fmt(c.paraiba), '#e2705f'],
+    ['Recorte analítico', fmt(c.analitico), '#7fc49a'],
+    ['classificados em algum cluster', fmt(c.classificadas), ''],
+    ['não classificados (declarados)', fmt(c.naoClass), '']
+  ].map(([a,b,cor],i) => `<tr><td${i>=4?' style="padding-left:14px"':''}>${a}</td><td class="n"${cor?` style="color:${cor}"`:''}>${b}</td></tr>`).join('');
+
+  /* carga tardia: o mapa já está no ar, então vizinhos e textos chegam sem travar nada */
+  baixar('dados/detalhe.bin.gz').then(u => {
+    NB = new Int32Array(u.buffer.slice(u.byteOffset, u.byteOffset + u.byteLength));
+    if(S.sel != null) render(); else pintar();
+  }).catch(e => console.warn('vizinhos indisponíveis', e));
+
+  baixar('dados/textos.bin.gz').then(u => {
+    const s = new TextDecoder().decode(u);
+    const corte = s.indexOf('\x1e');
+    TXT = s.slice(0, corte).split('\x1f');
+    LK  = s.slice(corte + 1).split('\x1f');
+    render();
+  }).catch(e => console.warn('textos indisponíveis', e));
+ } catch(e){ falhou(e); }
+})();
+</script>
+</body>
+</html>
