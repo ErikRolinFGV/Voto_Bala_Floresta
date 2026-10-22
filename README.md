@@ -33,6 +33,13 @@ cruzado e verificado manualmente.
 | ↳ classificadas em algum cluster | 67.265 |
 | ↳ não classificadas, declaradas | 8.098 |
 
+As publicações da Paraíba não estão nos dados do site: saem no gerador, junto com as duplicatas.
+Pelo mesmo motivo, o explorador não mostra o cluster 98 ("matérias paraíba"), em que 75 dos 76 posts
+eram da Paraíba; o único post amazônico dele conta como não classificado. Por isso o explorador
+exibe 119 clusters, 67.264 publicações classificadas e 8.099 não classificadas, enquanto a análise
+do relatório usa os 120 clusters do modelo. Posições, similaridades e o desenho da rede continuam
+calculados com os 120, de modo que nada mudou de lugar.
+
 São 195 perfis de veículos no recorte analítico, agrupados pelo modelo em 120 clusters e, por
 decisão interpretativa do pesquisador, em 13 macro-temas.
 
@@ -77,7 +84,7 @@ projetados em duas dimensões por MDS de referência sobre os 120 centroides. Cl
 texto, o veículo, o cluster e as cinco publicações semanticamente mais próximas, com retas ligando
 cada uma ao seu lugar no mapa.
 
-**Mapa de clusters.** Os 120 agrupamentos, com área proporcional ao volume dentro do recorte em
+**Mapa de clusters.** Os 119 agrupamentos exibidos, com área proporcional ao volume dentro do recorte em
 vigor. O denominador é absoluto, o maior cluster da base inteira, de modo que filtrar encolhe as
 bolhas de verdade em vez de apenas reembaralhar tamanhos.
 

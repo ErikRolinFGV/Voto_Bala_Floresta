@@ -129,9 +129,9 @@ h1,h2,h3,p{margin:0}
 <section class="sec" style="background:#131a16">
   <h2 class="rot">Como foi feito</h2>
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:#26332c;border:1px solid #26332c">
-    <div class="card"><span class="n">01</span><span class="t">Coleta</span><span class="c">Todas as publicações de <span id="p-perfis3">195</span> perfis das nove capitais, de 16 de agosto a 30 de outubro de 2024, executada pelo DAPP Lab da FGV.</span></div>
+    <div class="card"><span class="n">01</span><span class="t">Coleta</span><span class="c">Todas as publicações de <span id="p-perfis3">195</span> perfis das nove capitais, de 16 de agosto a 30 de outubro de 2024, executada pelo DAPP Lab da FGV. Publicações de veículos de fora da Amazônia Legal, trazidas por engano, foram retiradas.</span></div>
     <div class="card"><span class="n">02</span><span class="t">Leitura por modelo</span><span class="c">BERTopic com embeddings multilíngues transforma cada texto em posição num espaço de sentido.</span></div>
-    <div class="card"><span class="n">03</span><span class="t">120 clusters</span><span class="c">Agrupamentos emergentes, não categorias definidas de antemão. <span id="p-nc">8.098</span> publicações ficaram sem cluster.</span></div>
+    <div class="card"><span class="n">03</span><span class="t">119 clusters</span><span class="c">Agrupamentos emergentes, não categorias definidas de antemão. <span id="p-nc">8.099</span> publicações ficaram sem cluster.</span></div>
     <div class="card"><span class="n">04</span><span class="t">13 macro-temas</span><span class="c">Reunião interpretativa dos clusters — a única etapa em que a decisão é humana e declarada como tal.</span></div>
   </div>
 </section>
@@ -144,7 +144,7 @@ h1,h2,h3,p{margin:0}
   </div>
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px">
     <div class="card" style="border:1px solid #26332c"><span class="nar" style="font-size:20px;font-weight:700;color:#e8e6de">Mapa de posts</span><span class="c">As 75 mil publicações, uma por ponto. Clicar num ponto abre o texto, o veículo e as cinco publicações mais parecidas.</span></div>
-    <div class="card" style="border:1px solid #26332c"><span class="nar" style="font-size:20px;font-weight:700;color:#e8e6de">Mapa de clusters</span><span class="c">Os 120 agrupamentos, com área proporcional ao volume de publicações de cada um.</span></div>
+    <div class="card" style="border:1px solid #26332c"><span class="nar" style="font-size:20px;font-weight:700;color:#e8e6de">Mapa de clusters</span><span class="c">Os 119 agrupamentos, com área proporcional ao volume de publicações de cada um.</span></div>
     <div class="card" style="border:1px solid #26332c"><span class="nar" style="font-size:20px;font-weight:700;color:#e8e6de">Rede</span><span class="c">Quais macro-temas se aproximam entre si e com que força. É calculada uma vez sobre a base inteira.</span></div>
   </div>
 </section>
@@ -185,20 +185,13 @@ h1,h2,h3,p{margin:0}
       </div>
 
       <div style="display:flex;flex-direction:column;gap:10px">
-        <span class="nar" style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#4a5148;font-weight:700">Exclusões metodológicas</span>
-        <span style="font-size:13px;line-height:1.5;color:#4a5148;text-wrap:pretty">As duas vêm <strong style="font-weight:600">ligadas por padrão</strong>: a ferramenta esconde estes dados por decisão de método, e você precisa saber disso desde já.</span>
-        <label class="excl">
-          <input type="checkbox" id="cbPb" checked style="margin:2px 0 0;width:15px;height:15px;flex:none">
-          <span style="display:flex;flex-direction:column;gap:4px">
-            <span style="font-size:14px;font-weight:600;display:flex;align-items:center;gap:7px;flex-wrap:wrap">Só Amazônia Legal <span class="selo nar">padrão</span></span>
-            <span style="font-size:12px;line-height:1.5;color:#4a5148;text-wrap:pretty">Deixa de fora <span id="p-pb">3.085</span> publicações da Paraíba que a coleta trouxe por engano — o estado não pertence à Amazônia Legal.</span>
-          </span>
-        </label>
+        <span class="nar" style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#4a5148;font-weight:700">Exclusão metodológica</span>
+        <span style="font-size:13px;line-height:1.5;color:#4a5148;text-wrap:pretty">Ela vem <strong style="font-weight:600">ligada por padrão</strong>: a ferramenta esconde estes dados por decisão de método, e você precisa saber disso desde já.</span>
         <label class="excl">
           <input type="checkbox" id="cbNc" checked style="margin:2px 0 0;width:15px;height:15px;flex:none">
           <span style="display:flex;flex-direction:column;gap:4px">
             <span style="font-size:14px;font-weight:600;display:flex;align-items:center;gap:7px;flex-wrap:wrap">Excluir não classificadas <span class="selo nar">padrão</span></span>
-            <span style="font-size:12px;line-height:1.5;color:#4a5148;text-wrap:pretty">Deixa de fora <span id="p-nc2">8.098</span> publicações que o modelo não conseguiu atribuir a nenhum cluster.</span>
+            <span style="font-size:12px;line-height:1.5;color:#4a5148;text-wrap:pretty">Deixa de fora <span id="p-nc2">8.099</span> publicações que o modelo não conseguiu atribuir a nenhum cluster.</span>
           </span>
         </label>
       </div>
@@ -275,33 +268,18 @@ function pintarFundo(){
 /* ---------- prévia do total ---------- */
 function total(){
   const c = META.corpus;
-  const semPb = document.getElementById('cbPb').checked;
   const semNc = document.getElementById('cbNc').checked;
-  let n = META.temas.reduce((a,t,i)=> a + (sel[i] ? t.n : 0), 0);   // os volumes por tema são da Amazônia Legal
+  let n = META.temas.reduce((a,t,i)=> a + (sel[i] ? t.n : 0), 0);
   if(!semNc) n += c.naoClass;
-  if(!semPb){
-    /* As publicações da Paraíba não estão distribuídas por macro-tema nesta prévia. Com todos
-       os temas marcados a soma é exata; com alguns desmarcados vira proporção declarada. */
-    const pb = semNc ? c.paraibaClass : c.paraiba;
-    n += sel.every(Boolean) ? pb
-       : Math.round(pb * (n / Math.max(1, semNc ? c.classificadas : c.analitico)));
-  }
   return n;
 }
-const denominador = () => {
-  const c = META.corpus;
-  return document.getElementById('cbPb').checked ? c.analitico : c.analitico + c.paraiba;
-};
+const denominador = () => META.corpus.analitico;
 function atualizar(){
   const c = META.corpus;
-  const semPb = document.getElementById('cbPb').checked;
   const semNc = document.getElementById('cbNc').checked;
   const todos = sel.every(Boolean), nSel = sel.filter(Boolean).length;
   const n = total();
-  /* Com a Paraíba de volta e algum macro-tema desmarcado, a soma vira proporcional:
-     em vez de fingir precisão, o número se declara estimado. */
-  const estimado = !semPb && !todos && nSel > 0;
-  document.getElementById('total').textContent = (estimado ? '≈ ' : '') + fmt(n);
+  document.getElementById('total').textContent = fmt(n);
   document.getElementById('p-base2').textContent = fmt(denominador());
   document.getElementById('barra').style.width =
     Math.max(1, Math.min(100, Math.round(n / denominador() * 100))) + '%';
@@ -311,16 +289,14 @@ function atualizar(){
                  : 'Nenhum macro-tema selecionado: só as ' + fmt(c.naoClass) + ' não classificadas entrariam no mapa.';
   } else {
     nota = 'Em vigor: ' + [
-      semPb ? 'só Amazônia Legal' : 'com Paraíba',
       semNc ? 'sem não classificadas' : 'com não classificadas',
       todos ? 'todos os 13 macro-temas' : nSel + ' de 13 macro-temas'
     ].join(' · ') + '.';
-    if(estimado) nota += ' A soma da Paraíba é proporcional na prévia; o valor exato aparece ao entrar.';
   }
   document.getElementById('nota').textContent = nota;
   document.getElementById('bTodos').textContent = todos ? 'Desmarcar todos' : 'Marcar todos';
   document.getElementById('bEntrar').href = 'explorador.html?' + new URLSearchParams({
-    pb: semPb ? 1 : 0, nc: semNc ? 1 : 0,
+    nc: semNc ? 1 : 0,
     t: todos ? '' : sel.map((v,i)=>v?i:-1).filter(i=>i>=0).join(',')
   }).toString().replace(/&?t=$/, '');
 }
@@ -346,7 +322,6 @@ fetch('dados/meta.json').then(r => r.json()).then(m => {
   ['p-base','p-base2'].forEach(id => põe(id, fmt(c.analitico)));
   ['p-perfis','p-perfis2','p-perfis3'].forEach(id => põe(id, fmt(c.perfis)));
   ['p-nc','p-nc2'].forEach(id => põe(id, fmt(c.naoClass)));
-  põe('p-pb', fmt(c.paraiba));
   põe('k-base', fmt(c.analitico));  põe('k-perfis', fmt(c.perfis));
   põe('k-cl', fmt(m.clusters.length)); põe('k-tm', fmt(m.temas.length));
   põe('k-dias', fmt(c.dias));
@@ -364,7 +339,7 @@ fetch('dados/meta.json').then(r => r.json()).then(m => {
     document.querySelectorAll('#temas input').forEach(el => el.checked = v);
     atualizar();
   };
-  ['cbPb','cbNc'].forEach(id => document.getElementById(id).onchange = atualizar);
+  ['cbNc'].forEach(id => document.getElementById(id).onchange = atualizar);
   atualizar(); pintarFundo(); checarBotao();
 }).catch(e => {
   document.getElementById('nota').textContent =

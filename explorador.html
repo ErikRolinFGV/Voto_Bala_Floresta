@@ -242,12 +242,11 @@ input[type=text],select{font-family:Archivo,sans-serif;font-size:12.5px;padding:
       <p>Esta ferramenta permite explorar como os veículos de mídia local da Amazônia Legal enquadraram a cobertura das eleições municipais de 2024 no Instagram. Cada ponto do mapa é uma publicação real; publicações com sentido parecido ficam próximas.</p>
       <div class="grupo">
         <h3>O que você está vendo ao abrir</h3>
-        <p>A ferramenta já abre com dois recortes ligados, sinalizados no painel escuro à esquerda. É por isso que o total muda quando você mexe neles:</p>
+        <p>A ferramenta já abre com um recorte ligado, sinalizado no painel escuro à esquerda. É por isso que o total muda quando você mexe nele:</p>
         <div style="display:flex;flex-direction:column;gap:8px;padding-left:2px">
-          <span class="item"><b>·</b><span><strong>só Amazônia Legal</strong> — esconde <span class="d-pb"></span> publicações de veículos da Paraíba, que a coleta trouxe por engano e não pertencem ao universo do projeto.</span></span>
           <span class="item"><b>·</b><span><strong>sem não classificadas</strong> — esconde <span class="d-nc"></span> publicações que o modelo não conseguiu atribuir a nenhum cluster. Desligue a exclusão para vê-las, em cinza.</span></span>
         </div>
-        <p>Com os dois padrões, aparecem <span class="d-cls"></span> das <span class="d-base"></span> publicações do recorte analítico. O total exibido é sempre uma fração dessa base — nunca a ultrapassa.</p>
+        <p>Com o padrão, aparecem <span class="d-cls"></span> das <span class="d-base"></span> publicações do recorte analítico. O total exibido é sempre uma fração dessa base — nunca a ultrapassa.</p>
         <p>Cada vez que um filtro altera o total, a mudança é registrada no <strong>histórico de alterações</strong>, no mesmo painel: o que você fez, quantas publicações entraram ou saíram e o total resultante. Serve para refazer o raciocínio de um recorte sem precisar lembrar a ordem dos cliques.</p>
       </div>
       <div class="grupo">
@@ -283,11 +282,11 @@ input[type=text],select{font-family:Archivo,sans-serif;font-size:12.5px;padding:
       </div>
       <div class="grupo">
         <h3>Mapa de clusters</h3>
-        <p>Os 120 agrupamentos encontrados pelo modelo, com a área proporcional ao número de publicações dentro do recorte em vigor. O denominador é absoluto: o maior cluster da base inteira. Assim, filtrar encolhe as bolhas de verdade, em vez de só reembaralhar tamanhos.</p>
+        <p>Os 119 agrupamentos exibidos, com a área proporcional ao número de publicações dentro do recorte em vigor. O denominador é absoluto: o maior cluster da base inteira. Assim, filtrar encolhe as bolhas de verdade, em vez de só reembaralhar tamanhos.</p>
       </div>
       <div class="grupo">
         <h3>Rede</h3>
-        <p>Os macro-temas (ou os 120 clusters) ligados quando a similaridade de cosseno entre seus centroides supera o limiar escolhido. As posições vêm de stress majorization sobre a matriz inteira de similaridade, calculada uma vez: abrem sempre iguais e mudar o limiar não reembaralha o desenho.</p>
+        <p>Os macro-temas (ou os 119 clusters) ligados quando a similaridade de cosseno entre seus centroides supera o limiar escolhido. As posições vêm de stress majorization sobre a matriz inteira de similaridade, calculada uma vez: abrem sempre iguais e mudar o limiar não reembaralha o desenho.</p>
         <p>A rede não responde aos filtros de veículo, estado, engajamento ou período. As ligações vêm da similaridade entre os centroides, calculada sobre a base analítica inteira; refazer esse cálculo para cada recorte exigiria os vetores de todas as publicações no navegador. Por honestidade, esses controles ficam ocultos nesta aba — só permanecem os que de fato alteram o desenho.</p>
       </div>
       <div class="destaque"><span><strong style="color:#e2705f">Cuidado ao ler o mapa.</strong> Proximidade visual não é proximidade semântica. Comprimir 384 dimensões em duas distorce inevitavelmente: apenas 7,5% dos vizinhos mais próximos no espaço original também são os mais próximos na tela. Dois clusters podem parecer colados e não estar entre os seis mais semelhantes. Para afirmar proximidade, use o painel da direita ou a rede, que trabalham com as distâncias reais.</span></div>
@@ -302,7 +301,7 @@ input[type=text],select{font-family:Archivo,sans-serif;font-size:12.5px;padding:
         <tbody id="tabCorpus"></tbody></table>
       </div>
       <div class="grupo"><h3>Pré-processamento</h3><p>Correção de mojibake com dupla passagem de ftfy, normalização Unicode e três camadas de stopwords próprias: jargão de portal ("link na bio", "arraste"), os handles dos próprios veículos e termos genéricos de alta frequência. Foram sete rodadas de depuração.</p></div>
-      <div class="grupo"><h3>Clusterização</h3><p>BERTopic guiado por sementes temáticas: embeddings multilíngues (paraphrase-multilingual-MiniLM-L12-v2) → UMAP → HDBSCAN → c-TF-IDF. Resultado: 120 clusters, agrupados em 13 macro-temas.</p></div>
+      <div class="grupo"><h3>Clusterização</h3><p>BERTopic guiado por sementes temáticas: embeddings multilíngues (paraphrase-multilingual-MiniLM-L12-v2) → UMAP → HDBSCAN → c-TF-IDF. Resultado: 120 clusters, agrupados em 13 macro-temas. Um deles, o cluster 98, era formado quase só por publicações da Paraíba (75 de 76) e foi retirado do explorador; o único post amazônico que ele continha conta como não classificado. Por isso o explorador mostra 119.</p></div>
       <div class="grupo">
         <h3>Tratamento do residual</h3>
         <p>O HDBSCAN deixou 35,3% das publicações como ruído. Em vez de descartar tudo ou reatribuir tudo, adotou-se um critério de referência interna: uma publicação só é reatribuída a um tópico se sua similaridade ao centroide for maior ou igual ao percentil 10 dos documentos genuínos daquele mesmo tópico.</p>
@@ -320,6 +319,7 @@ input[type=text],select{font-family:Archivo,sans-serif;font-size:12.5px;padding:
       <div class="grupo"><h3>A UF é a do veículo, não a do assunto</h3><p>Um veículo de Manaus cobrindo Brasília conta como AM.</p></div>
       <div class="grupo"><h3>7% das publicações não têm veículo identificado</h3><p>São sobretudo perfis pessoais de jornalistas, ausentes do cadastro. Aparecem como <strong>não identificado</strong> e permanecem na análise temática.</p></div>
       <div class="grupo"><h3>O recorte não é exatamente "9 capitais"</h3><p>Cinco veículos do cadastro têm sede fora da capital — Rondonópolis, Lucas do Rio Verde, Canarana, Ariquemes e Açailândia —, somando <span class="d-int"></span> publicações. Use <strong>só capitais</strong> para excluí-los.</p></div>
+      <div class="grupo"><h3>A coleta trouxe publicações de fora do recorte</h3><p>A entrega da coleta incluiu <span class="d-pb"></span> publicações de veículos da Paraíba, estado que não pertence à Amazônia Legal. Elas foram retiradas antes da análise e não estão no explorador.</p></div>
       <div class="grupo"><h3>Não classificadas não são lixo</h3><p>As <span class="d-nc"></span> publicações sem cluster são, em boa parte, textos curtos demais para sustentar um agrupamento. Estão declaradas, não descartadas.</p></div>
       <div class="grupo"><h3>O texto exibido é o início da legenda</h3><p>Para o site caber num carregamento razoável, cada publicação traz os primeiros 220 caracteres da legenda. O link para o post original está no painel de detalhe, e a análise foi feita sobre o texto inteiro.</p></div>
     </div>
@@ -328,7 +328,7 @@ input[type=text],select{font-family:Archivo,sans-serif;font-size:12.5px;padding:
       <table><thead><tr><th>Termo</th><th>O que significa aqui</th></tr></thead><tbody>
         <tr><td class="t">Enquadramento</td><td>Seleção e saliência de aspectos da realidade num texto, de modo a promover certa definição do problema (Entman). É o objeto do projeto.</td></tr>
         <tr><td class="t">Embedding</td><td>Representação numérica do sentido de um texto — aqui, 384 números por publicação. Textos com sentido parecido têm vetores próximos.</td></tr>
-        <tr><td class="t">Cluster</td><td>Grupo de publicações que o modelo julgou semanticamente semelhantes. São 120.</td></tr>
+        <tr><td class="t">Cluster</td><td>Grupo de publicações que o modelo julgou semanticamente semelhantes. O modelo gerou 120; o explorador mostra 119.</td></tr>
         <tr><td class="t">Macro-tema</td><td>Agrupamento interpretativo de clusters, feito pelo pesquisador. São 13.</td></tr>
         <tr><td class="t">Centroide</td><td>O "centro de massa" de um cluster: a média dos embeddings de suas publicações.</td></tr>
         <tr><td class="t">Similaridade</td><td>Cosseno entre dois vetores, de −1 a 1. Acima de 0,5 já indica parentesco temático claro.</td></tr>
@@ -351,7 +351,7 @@ input[type=text],select{font-family:Archivo,sans-serif;font-size:12.5px;padding:
 'use strict';
 const fmt = n => n.toLocaleString('pt-BR');
 const esc = s => String(s).replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
-const CINZA_NC = '#4f5a52', COR_PB = '#8f2f27';
+const CINZA_NC = '#4f5a52';
 
 /* ============================ dados ============================ */
 let META = null, N = 0, NT = 0, NC = 0, DIAS = 0, T1 = 0, T2 = 0;
@@ -411,7 +411,7 @@ const S = {
   aba: 'posts',
   temas: [], estados: [], suportes: [], perfis: [],
   soCapitais: false, engP: 0, d0: 0, d1: 0,
-  semParaiba: true, semNaoClass: true,
+  semNaoClass: true,
   busca: '', pintura: 'tema', destaque: 'nenhum',
   sel: null, ultimo: null, selCl: null, selNo: null,
   temasRede: [], simMin: .55, modoRede: 'temas',
@@ -448,7 +448,7 @@ function recalcular(){
   for(let i = 0; i < N; i++){
     MASK[i] = 0;
     // exclusões de base: não entram na faceta, elas definem a base
-    if(S.semParaiba && !PAL[i]) continue;
+    if(!PAL[i]) continue;               // defesa: os dados já vêm só com a Amazônia Legal
     const t = PT[i];
     if(S.semNaoClass && t < 0) continue;
     if(S.soCapitais && PLOC[i] === 1) continue;
@@ -482,7 +482,7 @@ function recalcular(){
   EM_TELA = vis;
 }
 function baseAtual(){                 // denominador honesto do "de N em tela"
-  return S.semParaiba ? META.corpus.analitico : (META.corpus.analitico + META.corpus.paraiba);
+  return META.corpus.analitico;
 }
 
 /* ============================ histórico ============================ */
@@ -507,11 +507,11 @@ function padrao(){
   S.suportes = META.segmentos.map(() => true);
   S.perfis = META.tipos.map(() => true);
   S.soCapitais = false; S.engP = 0; S.d0 = 0; S.d1 = DIAS;
-  S.semParaiba = true; S.semNaoClass = true; S.busca = ''; BUSCA_HIT = null;
+  S.semNaoClass = true; S.busca = ''; BUSCA_HIT = null;
   S.sel = null; S.selCl = null;
 }
 function noPadrao(){
-  return S.semParaiba && S.semNaoClass && S.temas.every(Boolean) && S.estados.every(Boolean)
+  return S.semNaoClass && S.temas.every(Boolean) && S.estados.every(Boolean)
       && S.suportes.every(Boolean) && S.perfis.every(Boolean) && !S.soCapitais && S.engP === 0
       && S.d0 === 0 && S.d1 === DIAS && !S.busca.trim();
 }
@@ -554,7 +554,7 @@ function corDe(i){
   if(S.pintura === 'estado'){
     const uf = PUF[i];
     if(uf < 0) return '#6b7169';
-    return uf < META.corUF.length ? META.corUF[uf] : COR_PB;   // PB e afins em vermelho
+    return META.corUF[uf] || '#6b7169';
   }
   return META.temas[t].cor;
 }
@@ -585,7 +585,7 @@ function pintarPosts(ctx, w, h, dpr){
   ctx.fillStyle = '#232e28';
   for(let i = 0; i < N; i++){
     if(MASK[i]) continue;
-    if(S.semParaiba && !PAL[i]) continue;
+    if(!PAL[i]) continue;               // defesa: os dados já vêm só com a Amazônia Legal
     if(S.semNaoClass && PT[i] < 0) continue;
     ctx.fillRect(telaX(PX[i], w), telaY(PY[i], h), lado, lado);
   }
@@ -821,7 +821,7 @@ function pintarLinha(){
   const alt = h - eixo, disp = alt - topo;
   const todos = new Int32Array(DIAS), dentro = new Int32Array(DIAS);
   for(let i = 0; i < N; i++){
-    if(S.semParaiba && !PAL[i]) continue;
+    if(!PAL[i]) continue;               // defesa: os dados já vêm só com a Amazônia Legal
     if(S.semNaoClass && PT[i] < 0) continue;
     todos[PDIA[i]]++;
     if(MASK[i]) dentro[PDIA[i]]++;
@@ -890,12 +890,6 @@ function linhaRecorte(texto){
 function blocosRecorte(){
   const c = META.corpus;
   const r = [
-    { texto: S.semParaiba ? 'Só Amazônia Legal — ' + fmt(c.paraiba) + ' da Paraíba fora'
-                          : 'Paraíba incluída — ' + fmt(c.paraiba) + ' publicações fora da Amazônia Legal',
-      marca: S.semParaiba ? '#7fc49a' : '#e2705f',
-      botao: { acao:'pb', rot: S.semParaiba ? 'padrão' : 'reativar',
-               cor: S.semParaiba ? '#7fc49a' : '#e2705f',
-               borda: S.semParaiba ? '#3f5a4c' : '#6d3b34', dica:'padraoPb' } },
     { texto: S.semNaoClass ? 'Sem as ' + fmt(c.naoClass) + ' não classificadas pelo modelo'
                            : fmt(c.naoClass) + ' não classificadas no mapa, em cinza',
       marca: S.semNaoClass ? '#7fc49a' : '#e2705f',
@@ -1078,14 +1072,13 @@ function htmlFiltros(){
     </span>
     <div class="lista">
       ${META.ufs.map((u,i) => {
-        const pb = i >= META.corUF.length;
-        if(pb && S.semParaiba) return '';
-        const cor = pb ? COR_PB : META.corUF[i];
+        if(i >= META.corUF.length) return '';      // defesa: só os 9 estados da Amazônia Legal
+        const cor = META.corUF[i];
         return `
         <label style="grid-template-columns:14px 9px minmax(0,1fr) auto">
           <input type="checkbox" ${S.estados[i]?'checked':''} data-ac="estado" data-i="${i}" style="width:14px;height:14px;margin:0">
           <span class="bola" style="background:${porEstado?cor:'transparent'};border:1px solid ${porEstado?cor:'#c3c1b4'}"></span>
-          <span class="nm">${esc(u)}${pb ? ' <span style="color:#8f2f27;font-size:10.5px">fora da Amazônia Legal</span>' : ''}</span>
+          <span class="nm">${esc(u)}</span>
           <span class="qt">${fmt(CT.estado[i])}</span>
         </label>`; }).join('')}
     </div>
@@ -1180,7 +1173,6 @@ function htmlPublicacao(){
   const i = S.sel, t = PT[i];
   const g = PCI[i] >= 0 ? META.clusters[PCI[i]] : null;
   const cor = t < 0 ? CINZA_NC : META.temas[t].cor;
-  const pb = PUF[i] >= META.corUF.length;
   const viz = vizinhos(i);
   const texto = TXT ? TXT[i] : null;
   const link = LK && LK[i] ? 'https://www.instagram.com/' + LK[i] + '/' : null;
@@ -1194,7 +1186,7 @@ function htmlPublicacao(){
       <span style="width:11px;height:11px;border-radius:50%;background:${cor};flex:none"></span>
       <span class="nar" style="font-size:15px;font-weight:600">${t<0?'Não classificada':esc(META.temas[t].nome)}</span>
     </div>
-    <span style="font-size:11.5px;color:#9aa298;line-height:1.45">${pb?'Paraíba (fora da Amazônia Legal)':esc(META.ufs[PUF[i]]||'—')} · ${esc(META.segmentos[PSEG[i]])} · ${esc(META.tipos[PTV[i]])}</span>
+    <span style="font-size:11.5px;color:#9aa298;line-height:1.45">${esc(META.ufs[PUF[i]]||'—')} · ${esc(META.segmentos[PSEG[i]])} · ${esc(META.tipos[PTV[i]])}</span>
     ${PLOC[i]===1 ? '<span style="font-size:11px;color:#e2705f;line-height:1.4">Veículo com sede fora da capital</span>' : ''}
     ${g ? `<span style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;border-top:1px solid #26332c;padding-top:8px">
       <span class="nar" style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#7d857c;font-weight:700;white-space:nowrap">Cluster ${g.id}</span>
@@ -1434,9 +1426,6 @@ const ACOES = {
   fecharPub: () => { S.sel = null; S.esq = true; render(); },
   fecharCluster: () => { S.selCl = null; S.esq = true; render(); },
   fecharNo: () => { S.selNo = null; render(); },
-  pb: () => registrar(S.semParaiba ? 'Paraíba incluída' : 'Paraíba excluída (padrão)',
-        () => { S.semParaiba = !S.semParaiba;
-                if(!S.semParaiba) S.estados = META.ufs.map((u,i) => i < META.corUF.length ? S.estados[i] : true); }),
   nc: () => registrar(S.semNaoClass ? 'Não classificadas incluídas' : 'Não classificadas excluídas (padrão)',
         () => { S.semNaoClass = !S.semNaoClass; }),
   voltarPadrao: () => registrar('Voltou ao recorte padrão', padrao),
@@ -1633,15 +1622,14 @@ function trocarAba(aba){
 const DICAS = {
   inicio: ['Voltar ao início', 'Abre a página de apresentação do projeto: metodologia, as três visões e as limitações declaradas.'],
   abaPosts: ['Mapa de posts', 'Uma publicação por ponto. Clique num ponto para abrir o texto, o veículo e as cinco publicações mais parecidas.'],
-  abaClusters: ['Mapa de clusters', 'Os 120 agrupamentos detectados pelo modelo, com área proporcional ao volume. Ao ampliar, aparecem os nomes formados pelos termos mais característicos de cada cluster.'],
+  abaClusters: ['Mapa de clusters', 'Os 119 agrupamentos exibidos, com área proporcional ao volume. Ao ampliar, aparecem os nomes formados pelos termos mais característicos de cada cluster.'],
   abaRede: ['Rede de macro-temas', 'Quais macro-temas se aproximam entre si e com que força. É calculada uma vez sobre a base inteira, por isso não responde a filtros.'],
   total: ['Total em tela', 'Publicações que passam por todos os filtros ativos. O segundo número é a base em vigor.'],
   png: ['Exportar PNG', 'Salva exatamente o que está na tela, com o recorte em vigor impresso na imagem. Não exporta a base inteira.'],
   csv: ['Exportar CSV', 'Exporta as publicações do recorte em vigor, uma por linha, com macro-tema, cluster, veículo, estado, data, engajamento e link.'],
-  recorte: ['Recorte em vigor', 'A lista completa do que está sendo mostrado e do que ficou de fora. As duas primeiras linhas são exclusões de método, e podem ser desligadas.'],
-  padraoPb: ['Exclusão da Paraíba', 'A coleta trouxe publicações da Paraíba por engano — o estado não pertence à Amazônia Legal. Clique para incluí-las de volta e ver o efeito.'],
+  recorte: ['Recorte em vigor', 'A lista completa do que está sendo mostrado e do que ficou de fora. A primeira linha é uma exclusão de método, e pode ser desligada.'],
   padraoNc: ['Não classificadas', 'Publicações que o modelo não conseguiu atribuir a nenhum cluster. Clique para incluí-las: elas entram no mapa em cinza.'],
-  padrao: ['Voltar ao padrão', 'Devolve todos os filtros ao recorte padrão da pesquisa: só Amazônia Legal, sem não classificadas, todos os macro-temas, todo o período.'],
+  padrao: ['Voltar ao padrão', 'Devolve todos os filtros ao recorte padrão da pesquisa: sem não classificadas, todos os macro-temas, todo o período.'],
   historico: ['Histórico de alterações', 'Cada mudança de filtro entra numerada, com quantas publicações entraram ou saíram e o total resultante. Serve para reconstruir o caminho de uma análise.'],
   mapa: ['O que está no mapa', 'Tudo nesta seção recorta a base: mexer aqui muda o total em tela. Os contadores ao lado de cada opção são facetados.'],
   busca: ['Busca textual', 'Filtra por macro-tema, estado e, assim que os textos terminam de carregar, pelo conteúdo das publicações.'],
@@ -1656,12 +1644,12 @@ const DICAS = {
   destaque: ['Destacar campo', 'Não filtra nada: só reduz o contraste do que está fora do macro-tema escolhido, para achá-lo na massa de pontos.'],
   perfil: ['Perfil de publicação', 'Do cadastro do Atlas: nativo digital publica em fluxo contínuo; diário e periódico transpõem a periodicidade do impresso. Parte das publicações não tem veículo identificado.'],
   capitais: ['Só capitais', 'Cinco veículos do cadastro têm sede fora da capital — Rondonópolis, Lucas do Rio Verde, Canarana, Ariquemes e Açailândia. Ligue para excluí-los do recorte.'],
-  modoRede: ['Granularidade da rede', 'A rede pode ligar os 13 macro-temas ou descer aos 120 clusters. Em modo cluster, só entram os clusters dos macro-temas marcados abaixo.'],
+  modoRede: ['Granularidade da rede', 'A rede pode ligar os 13 macro-temas ou descer aos 119 clusters. Em modo cluster, só entram os clusters dos macro-temas marcados abaixo.'],
   vizinhos: ['Publicações mais parecidas', 'Vizinhos no espaço de 384 dimensões do modelo, calculados dentro do cluster. As retas no mapa mostram onde eles caíram na projeção — quase nunca ao lado.'],
   ajuda: ['Ajuda', 'Como usar, as três visões, metodologia, limitações e glossário. Também abre com a tecla ?'],
   zoom: ['Navegação no mapa', 'Role para ampliar em torno do cursor e arraste para deslocar. O enquadramento é limitado à moldura do mapa.'],
   corAtiva: ['Cor ativa', 'As bolinhas coloridas aparecem sempre na seção que está pintando o mapa neste momento. Trocar a cor dos pontos move as bolinhas de lugar.'],
-  cluster: ['Clusters', 'Cada bolha é um dos 120 agrupamentos do modelo, com área proporcional ao volume DENTRO do recorte em vigor, sobre o maior cluster da base inteira. Clique numa bolha para abri-la.'],
+  cluster: ['Clusters', 'Cada bolha é um dos 119 agrupamentos exibidos, com área proporcional ao volume DENTRO do recorte em vigor, sobre o maior cluster da base inteira. Clique numa bolha para abri-la.'],
   simMin: ['Similaridade mínima', 'Só as ligações com similaridade igual ou acima do valor escolhido são desenhadas. Os valores são arredondados na origem, então o número exibido é o número comparado.'],
   no: ['Nós da rede', 'Clique num nó para ver todas as suas arestas e o valor de similaridade de cada uma. Desmarcar um macro-tema o retira da rede.']
 };
@@ -1776,7 +1764,6 @@ window.addEventListener('error', ev => { if(document.getElementById('app').hidde
 
 function estadoDaURL(){
   const p = new URLSearchParams(location.search);
-  if(p.get('pb') === '0') S.semParaiba = false;
   if(p.get('nc') === '0') S.semNaoClass = false;
   const t = p.get('t');
   if(t){
@@ -1835,7 +1822,7 @@ function ligarResize(){
   document.getElementById('tabCorpus').innerHTML = [
     ['Coletados', fmt(c.coletados), ''],
     ['− duplicados na entrega da coleta', '−' + fmt(c.duplicados), '#e2705f'],
-    ['− veículos da Paraíba, fora da Amazônia Legal', '−' + fmt(c.paraiba), '#e2705f'],
+    ['− veículos de fora da Amazônia Legal (Paraíba), retirados', '−' + fmt(c.paraiba), '#e2705f'],
     ['Recorte analítico', fmt(c.analitico), '#7fc49a'],
     ['classificados em algum cluster', fmt(c.classificadas), ''],
     ['não classificados (declarados)', fmt(c.naoClass), '']
